@@ -476,6 +476,10 @@
             transform: scale(1.05);
         }
 
+        .user-details {
+            cursor: pointer;
+        }
+
         .user-details h1 {
             font-size: 1.1rem;
             color: var(--picpay-black);
@@ -515,7 +519,7 @@
             padding: 0;
         }
 
-        /* Balance Carousel - NOVO DESIGN */
+        /* Balance Carousel - NOVO DESIGN (sem setas) */
         .balance-section {
             padding: 20px 20px 0;
         }
@@ -523,22 +527,33 @@
         .balance-carousel-container {
             position: relative;
             margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            touch-action: pan-y;
+            cursor: pointer;
         }
 
         .balance-carousel {
             display: flex;
-            overflow: hidden;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
         }
 
         .balance-slide {
             min-width: 100%;
-            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
-            border-radius: var(--radius);
             padding: 25px;
             color: white;
-            transition: transform 0.5s ease;
+            box-sizing: border-box;
+        }
+
+        /* Primeiro slide - Saldo */
+        .balance-slide:first-child {
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
+        }
+
+        /* Segundo slide - Cartão */
+        .balance-slide:nth-child(2) {
+            background: linear-gradient(135deg, #667eea, #764ba2);
         }
 
         .balance-label {
@@ -570,42 +585,37 @@
             margin-top: 10px;
         }
 
-        .highlight {
-            color: var(--picpay-yellow);
-            font-weight: 600;
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
-        .carousel-arrows {
-            position: absolute;
-            top: 50%;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-            padding: 0 10px;
-            pointer-events: none;
+        .card-description {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
         }
 
-        .carousel-arrow {
-            background-color: rgba(255, 255, 255, 0.8);
+        .card-access-btn {
+            background-color: white;
+            color: #667eea;
             border: none;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--picpay-black);
-            cursor: pointer;
-            transition: var(--transition);
-            pointer-events: auto;
-            font-size: 1rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            gap: 8px;
+            width: 100%;
         }
 
-        .carousel-arrow:hover {
-            background-color: white;
-            transform: scale(1.1);
+        .card-access-btn:hover {
+            background-color: #f8f9fa;
         }
 
         .carousel-dots {
@@ -627,75 +637,6 @@
         .carousel-dot.active {
             background-color: var(--picpay-green);
             transform: scale(1.2);
-        }
-
-        /* Cartão de Crédito - NOVO DESIGN */
-        .credit-card-section {
-            background-color: var(--picpay-white);
-            padding: 20px;
-            margin: 0 20px 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border-left: 4px solid var(--picpay-green);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .card-title {
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--picpay-black);
-        }
-
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .card-number {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--picpay-black);
-            letter-spacing: 1px;
-        }
-
-        .card-type {
-            background-color: var(--picpay-light-gray);
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--picpay-gray);
-        }
-
-        .card-access-btn {
-            background-color: var(--picpay-green);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .card-access-btn:hover {
-            background-color: var(--picpay-dark-green);
         }
 
         /* Pro dia a dia - CARROSSEL */
@@ -776,25 +717,22 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        /* Apenas o Pix verde, os outros cinza claro */
+        .pix-bg { 
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green)); 
+        }
+        .payment-bg, .recharge-bg, .piggy-bg, .credit-bg, 
+        .loan-bg, .crypto-bg, .pot-bg, .invest-bg, 
+        .vehicle-bg, .more-bg { 
+            background: linear-gradient(135deg, #cccccc, #aaaaaa); 
+        }
+
         .daily-label {
             font-size: 0.75rem;
             font-weight: 600;
             text-align: center;
             line-height: 1.2;
         }
-
-        /* Cores para os ícones do carrossel */
-        .pix-bg { background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green)); }
-        .payment-bg { background: linear-gradient(135deg, #3498db, #2980b9); }
-        .recharge-bg { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-        .piggy-bg { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
-        .credit-bg { background: linear-gradient(135deg, #ff9f43, #ff7f00); }
-        .loan-bg { background: linear-gradient(135deg, #2ecc71, #27ae60); }
-        .crypto-bg { background: linear-gradient(135deg, #f1c40f, #f39c12); }
-        .pot-bg { background: linear-gradient(135deg, #1abc9c, #16a085); }
-        .invest-bg { background: linear-gradient(135deg, #34495e, #2c3e50); }
-        .vehicle-bg { background: linear-gradient(135deg, #e74c3c, #c0392b); }
-        .more-bg { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
 
         /* Features Grid - NOVO DESIGN */
         .features-grid {
@@ -1173,7 +1111,7 @@
         <div class="user-info-section">
             <div class="user-info">
                 <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
-                <div class="user-details">
+                <div class="user-details" id="user-details">
                     <h1 id="user-name">Carlos Silva</h1>
                     <p>
                         <i class="fas fa-id-card"></i>
@@ -1181,7 +1119,7 @@
                     </p>
                 </div>
             </div>
-            <button class="add-account-btn">
+            <button class="add-account-btn" id="add-account-btn">
                 <i class="fas fa-plus"></i>
                 Adicionar conta
             </button>
@@ -1191,8 +1129,9 @@
         <main class="main-container">
             <!-- Saldo em Conta - CARROSSEL -->
             <section class="balance-section">
-                <div class="balance-carousel-container">
+                <div class="balance-carousel-container" id="balance-carousel-container">
                     <div class="balance-carousel" id="balance-carousel">
+                        <!-- Primeiro slide - Saldo -->
                         <div class="balance-slide">
                             <div class="balance-label">
                                 <span>Saldo em conta</span>
@@ -1206,47 +1145,24 @@
                                 <i class="fas fa-chevron-right"></i>
                             </div>
                         </div>
+                        
+                        <!-- Segundo slide - Cartão -->
                         <div class="balance-slide">
-                            <div class="balance-label">
-                                <span>Saldo guardado</span>
-                                <span>Rendendo <span class="highlight">115% do CDI</span></span>
+                            <div class="card-title">Cartão</div>
+                            <div class="card-description">
+                                Encontre tudo sobre seu Cartão aqui
                             </div>
-                            <div class="balance-value">
-                                R$ <span>3.250,00</span>
-                            </div>
-                            <div class="balance-info">
-                                <span>Ver investimentos</span>
-                                <i class="fas fa-chevron-right"></i>
-                            </div>
+                            <button class="card-access-btn">
+                                <i class="fas fa-credit-card"></i>
+                                Acessar cartão
+                            </button>
                         </div>
-                    </div>
-                    <div class="carousel-arrows">
-                        <button class="carousel-arrow" id="prev-balance">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="carousel-arrow" id="next-balance">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
                     </div>
                     <div class="carousel-dots" id="balance-dots">
                         <div class="carousel-dot active"></div>
                         <div class="carousel-dot"></div>
                     </div>
                 </div>
-            </section>
-
-            <!-- Cartão de Crédito - NOVO DESIGN -->
-            <section class="credit-card-section">
-                <div class="card-header">
-                    <h3 class="card-title">Cartão</h3>
-                </div>
-                <div class="card-details">
-                    <div class="card-number">Encontre tudo sobre seu Cartão aqui</div>
-                </div>
-                <button class="card-access-btn">
-                    <i class="fas fa-credit-card"></i>
-                    Acessar cartão
-                </button>
             </section>
 
             <!-- Pro dia a dia - CARROSSEL -->
@@ -1428,9 +1344,10 @@
             <div class="form-group">
                 <label for="user-account-input" class="form-label">Tipo de conta</label>
                 <select id="user-account-input" class="form-input">
-                    <option value="Conta • Empresas">Conta • Empresas</option>
-                    <option value="Conta • Pessoa Física">Conta • Pessoa Física</option>
-                    <option value="Conta • Universitária">Conta • Universitária</option>
+                    <option value="Conta">Conta</option>
+                    <option value="Conta Empresas">Conta Empresas</option>
+                    <option value="Conta Pessoa Física">Conta Pessoa Física</option>
+                    <option value="Conta Universitária">Conta Universitária</option>
                 </select>
             </div>
             <div class="modal-actions">
@@ -1495,8 +1412,8 @@
                 cpf: '49058911837',
                 cpfFormatted: '490.589.118-37',
                 password: '1814Enzo',
-                defaultName: 'Enzo Silva',
-                defaultPhoto: 'https://randomuser.me/api/portraits/men/32.jpg',
+                defaultName: 'Carlos Silva',
+                defaultPhoto: 'https://randomuser.me/api/portraits/men/75.jpg',
                 defaultBalance: '1.568,42'
             },
             {
@@ -1509,12 +1426,23 @@
             }
         ];
         
-        // Elementos da splash screen e login
+        // ==============================================
+        // VARIÁVEIS GLOBAIS
+        // ==============================================
+        let currentUser = null;
+        let currentBalanceSlide = 0;
+        let startX = 0;
+        let isDragging = false;
+        
+        // ==============================================
+        // ELEMENTOS DO DOM
+        // ==============================================
+        // Telas
         const splashScreen = document.getElementById('splash-screen');
         const loginScreen = document.getElementById('login-screen');
         const mainContent = document.getElementById('main-content');
         
-        // Elementos do formulário de login
+        // Login
         const loginForm = document.getElementById('login-form');
         const cpfInput = document.getElementById('cpf');
         const passwordInput = document.getElementById('password');
@@ -1523,23 +1451,44 @@
         const errorMessage = document.getElementById('error-message');
         const rememberMeCheckbox = document.getElementById('remember-me');
         
-        // Variável para armazenar o usuário atual
-        let currentUser = null;
-        
-        // Elementos DOM do app
+        // Dados do usuário
         const userNameElement = document.getElementById('user-name');
         const userAccountElement = document.getElementById('user-account');
         const balanceElement = document.getElementById('balance');
         const profilePicElement = document.getElementById('profile-pic');
         const currentTimeElement = document.getElementById('current-time');
+        const userDetailsElement = document.getElementById('user-details');
         
-        // ==============================================
-        // CARROSSEL DO SALDO
-        // ==============================================
-        let currentBalanceSlide = 0;
-        const balanceSlides = document.querySelectorAll('.balance-slide');
-        const balanceDots = document.querySelectorAll('.balance-dots .carousel-dot');
+        // Carrossel
+        const balanceCarouselContainer = document.getElementById('balance-carousel-container');
         const balanceCarousel = document.getElementById('balance-carousel');
+        const balanceSlides = document.querySelectorAll('.balance-slide');
+        
+        // Botões clicáveis
+        const addAccountBtn = document.getElementById('add-account-btn');
+        
+        // Modais
+        const nameModal = document.getElementById('name-modal');
+        const balanceModal = document.getElementById('balance-modal');
+        const photoModal = document.getElementById('photo-modal');
+        
+        // Botões dos modais
+        const closeNameModal = document.getElementById('close-name-modal');
+        const closeBalanceModal = document.getElementById('close-balance-modal');
+        const closePhotoModal = document.getElementById('close-photo-modal');
+        const cancelNameBtn = document.getElementById('cancel-name');
+        const cancelBalanceBtn = document.getElementById('cancel-balance');
+        const cancelPhotoBtn = document.getElementById('cancel-photo');
+        const saveNameBtn = document.getElementById('save-name');
+        const saveBalanceBtn = document.getElementById('save-balance');
+        const savePhotoBtn = document.getElementById('save-photo');
+        
+        // Inputs dos modais
+        const newNameInput = document.getElementById('new-name');
+        const userAccountInput = document.getElementById('user-account-input');
+        const newBalanceInput = document.getElementById('new-balance');
+        const photoUrlInput = document.getElementById('photo-url');
+        const photoUploadInput = document.getElementById('photo-upload');
         
         // ==============================================
         // INICIALIZAÇÃO DA PÁGINA
@@ -1571,7 +1520,7 @@
                     updateTime();
                     setInterval(updateTime, 60000);
                     
-                    // Inicializar eventos do app
+                    // Inicializar todos os eventos do app
                     initAppEvents();
                     return;
                 } else {
@@ -1707,7 +1656,7 @@
                 updateTime();
                 setInterval(updateTime, 60000);
                 
-                // Inicializar eventos do app
+                // Inicializar todos os eventos do app
                 initAppEvents();
             }, 500);
         }
@@ -1808,22 +1757,20 @@
             currentTimeElement.textContent = `${hours}:${minutes}`;
         }
         
-        // Funções do carrossel do saldo
+        // Carrossel do saldo
         function updateBalanceCarousel() {
             balanceCarousel.style.transform = `translateX(-${currentBalanceSlide * 100}%)`;
             
             // Atualizar dots
-            document.querySelectorAll('.balance-dots .carousel-dot').forEach((dot, index) => {
+            const dots = document.querySelectorAll('#balance-dots .carousel-dot');
+            dots.forEach((dot, index) => {
                 dot.classList.toggle('active', index === currentBalanceSlide);
             });
         }
         
         function initBalanceCarousel() {
-            const prevBtn = document.getElementById('prev-balance');
-            const nextBtn = document.getElementById('next-balance');
-            const dotsContainer = document.getElementById('balance-dots');
-            
             // Criar dots
+            const dotsContainer = document.getElementById('balance-dots');
             dotsContainer.innerHTML = '';
             for (let i = 0; i < balanceSlides.length; i++) {
                 const dot = document.createElement('div');
@@ -1835,101 +1782,60 @@
                 dotsContainer.appendChild(dot);
             }
             
-            // Eventos dos botões
-            prevBtn.addEventListener('click', () => {
-                currentBalanceSlide = (currentBalanceSlide - 1 + balanceSlides.length) % balanceSlides.length;
-                updateBalanceCarousel();
+            // Swipe/touch para trocar slides
+            balanceCarouselContainer.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                isDragging = true;
             });
             
-            nextBtn.addEventListener('click', () => {
-                currentBalanceSlide = (currentBalanceSlide + 1) % balanceSlides.length;
-                updateBalanceCarousel();
+            balanceCarouselContainer.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+            });
+            
+            balanceCarouselContainer.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                
+                const endX = e.changedTouches[0].clientX;
+                const diffX = startX - endX;
+                
+                // Se o swipe for significativo (> 50px)
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // Swipe para a esquerda - próximo slide
+                        currentBalanceSlide = (currentBalanceSlide + 1) % balanceSlides.length;
+                    } else {
+                        // Swipe para a direita - slide anterior
+                        currentBalanceSlide = (currentBalanceSlide - 1 + balanceSlides.length) % balanceSlides.length;
+                    }
+                    updateBalanceCarousel();
+                }
+                
+                isDragging = false;
+            });
+            
+            // Clique no carrossel para editar saldo (apenas no primeiro slide)
+            balanceCarouselContainer.addEventListener('click', (e) => {
+                // Só abre modal se for o primeiro slide (saldo)
+                if (currentBalanceSlide === 0) {
+                    newBalanceInput.value = balanceElement.textContent;
+                    balanceModal.style.display = 'flex';
+                }
             });
             
             // Inicializar carrossel
             updateBalanceCarousel();
         }
         
-        // Função para rolar o carrossel do dia a dia
-        function scrollDailyCarousel(direction) {
-            const carousel = document.getElementById('daily-carousel');
-            const scrollAmount = 200;
-            
-            if (direction === 'left') {
-                carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            } else {
-                carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            }
-        }
-        
-        function initAppEvents() {
-            console.log('Inicializando eventos do app...');
-            
-            // Inicializar carrossel do saldo
-            initBalanceCarousel();
-            
-            // Botões de edição
-            const editNameBtn = document.getElementById('edit-name-btn');
-            const editBalanceBtn = document.getElementById('edit-balance-btn');
-            
-            // Modais
-            const nameModal = document.getElementById('name-modal');
-            const balanceModal = document.getElementById('balance-modal');
-            const photoModal = document.getElementById('photo-modal');
-            
-            // Botões para fechar modais
-            const closeNameModal = document.getElementById('close-name-modal');
-            const closeBalanceModal = document.getElementById('close-balance-modal');
-            const closePhotoModal = document.getElementById('close-photo-modal');
-            
-            // Botões de cancelar
-            const cancelNameBtn = document.getElementById('cancel-name');
-            const cancelBalanceBtn = document.getElementById('cancel-balance');
-            const cancelPhotoBtn = document.getElementById('cancel-photo');
-            
-            // Botões de salvar
-            const saveNameBtn = document.getElementById('save-name');
-            const saveBalanceBtn = document.getElementById('save-balance');
-            const savePhotoBtn = document.getElementById('save-photo');
-            
-            // Inputs dos formulários
-            const newNameInput = document.getElementById('new-name');
-            const userAccountInput = document.getElementById('user-account-input');
-            const newBalanceInput = document.getElementById('new-balance');
-            const photoUrlInput = document.getElementById('photo-url');
-            const photoUploadInput = document.getElementById('photo-upload');
-
-            // Abrir modal de editar nome (quando existir o botão)
-            if (editNameBtn) {
-                editNameBtn.addEventListener('click', () => {
-                    newNameInput.value = userNameElement.textContent;
-                    userAccountInput.value = userAccountElement.textContent;
-                    nameModal.style.display = 'flex';
-                });
-            }
-
-            // Abrir modal de editar saldo
-            if (editBalanceBtn) {
-                editBalanceBtn.addEventListener('click', () => {
-                    newBalanceInput.value = balanceElement.textContent;
-                    balanceModal.style.display = 'flex';
-                });
-            }
-
-            // Abrir modal de alterar foto
-            profilePicElement.addEventListener('click', () => {
-                photoUrlInput.value = profilePicElement.src;
-                photoModal.style.display = 'flex';
-            });
-
+        function initModals() {
             // Fechar todos os modais
             function closeAllModals() {
                 nameModal.style.display = 'none';
                 balanceModal.style.display = 'none';
                 photoModal.style.display = 'none';
-                photoUploadInput.value = '';
+                if (photoUploadInput) photoUploadInput.value = '';
             }
-
+            
             // Eventos para fechar modais
             closeNameModal.addEventListener('click', closeAllModals);
             closeBalanceModal.addEventListener('click', closeAllModals);
@@ -1938,7 +1844,7 @@
             if (cancelNameBtn) cancelNameBtn.addEventListener('click', closeAllModals);
             if (cancelBalanceBtn) cancelBalanceBtn.addEventListener('click', closeAllModals);
             if (cancelPhotoBtn) cancelPhotoBtn.addEventListener('click', closeAllModals);
-
+            
             // Salvar nome
             if (saveNameBtn) {
                 saveNameBtn.addEventListener('click', () => {
@@ -1950,11 +1856,10 @@
                         userAccountElement.textContent = newAccount;
                         saveUserData(); // Salvar alterações
                         closeAllModals();
-                        alert('Nome atualizado com sucesso!');
                     }
                 });
             }
-
+            
             // Salvar saldo
             if (saveBalanceBtn) {
                 saveBalanceBtn.addEventListener('click', () => {
@@ -1965,12 +1870,11 @@
                             balanceElement.textContent = formattedBalance;
                             saveUserData(); // Salvar alterações
                             closeAllModals();
-                            alert('Saldo atualizado com sucesso!');
                         }
                     }
                 });
             }
-
+            
             // Salvar foto
             if (savePhotoBtn) {
                 savePhotoBtn.addEventListener('click', () => {
@@ -1983,7 +1887,6 @@
                             profilePicElement.src = e.target.result;
                             saveUserData(); // Salvar alterações
                             closeAllModals();
-                            alert('Foto atualizada com sucesso!');
                         };
                         reader.readAsDataURL(file);
                     } else if (newPhotoUrl) {
@@ -1992,7 +1895,6 @@
                             profilePicElement.src = newPhotoUrl;
                             saveUserData(); // Salvar alterações
                             closeAllModals();
-                            alert('Foto atualizada com sucesso!');
                         };
                         img.onerror = function() {
                             alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
@@ -2001,45 +1903,100 @@
                     }
                 });
             }
-
+            
             // Fechar modal ao clicar fora
             window.addEventListener('click', (event) => {
                 if (event.target === nameModal || event.target === balanceModal || event.target === photoModal) {
                     closeAllModals();
                 }
             });
-
-            // Simular funcionalidade dos botões
-            document.querySelectorAll('.daily-item, .feature-card, .nav-item, .card-access-btn, .add-account-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    if (button.getAttribute('href') === '#' || button.tagName === 'BUTTON') {
+        }
+        
+        function initClickEvents() {
+            // Foto de perfil - clicar para editar
+            profilePicElement.addEventListener('click', () => {
+                photoUrlInput.value = profilePicElement.src;
+                photoModal.style.display = 'flex';
+            });
+            
+            // Nome do usuário - clicar para editar
+            userDetailsElement.addEventListener('click', () => {
+                newNameInput.value = userNameElement.textContent;
+                userAccountInput.value = userAccountElement.textContent;
+                nameModal.style.display = 'flex';
+            });
+            
+            // Botão Adicionar conta
+            if (addAccountBtn) {
+                addAccountBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('Funcionalidade: Adicionar conta');
+                });
+            }
+            
+            // Todos os botões clicáveis do app
+            const clickableElements = document.querySelectorAll(
+                '.daily-item, .feature-card, .nav-item, .card-access-btn, .icon-circle, .search-input, .see-all'
+            );
+            
+            clickableElements.forEach(element => {
+                element.addEventListener('click', function(e) {
+                    // Se for um link vazio ou botão, mostrar alerta
+                    if (this.getAttribute('href') === '#' || this.tagName === 'BUTTON' || this.classList.contains('icon-circle')) {
                         e.preventDefault();
-                        const buttonText = button.textContent.trim() || button.querySelector('span')?.textContent || button.querySelector('.daily-label')?.textContent || 'este botão';
-                        alert(`Funcionalidade do PicPay em desenvolvimento!\nAção: ${buttonText}`);
+                        
+                        let actionText = '';
+                        if (this.classList.contains('daily-item')) {
+                            actionText = this.querySelector('.daily-label').textContent;
+                        } else if (this.classList.contains('feature-card')) {
+                            actionText = this.querySelector('h3').textContent;
+                        } else if (this.classList.contains('nav-item')) {
+                            actionText = this.querySelector('.nav-label').textContent;
+                        } else if (this.classList.contains('card-access-btn')) {
+                            actionText = 'Acessar cartão';
+                        } else if (this.classList.contains('icon-circle')) {
+                            const iconClass = this.querySelector('i').className;
+                            if (iconClass.includes('fa-question')) actionText = 'Ajuda';
+                            else if (iconClass.includes('fa-comment-dots')) actionText = 'Chat';
+                            else if (iconClass.includes('fa-bell')) actionText = 'Notificações';
+                        } else if (this.classList.contains('see-all')) {
+                            actionText = 'Ver todos';
+                        }
+                        
+                        if (actionText) {
+                            alert(`Funcionalidade do PicPay: ${actionText}`);
+                        }
                     }
                 });
             });
-
-            // Efeitos visuais
-            document.querySelectorAll('.daily-item, .feature-card').forEach(card => {
-                card.addEventListener('mousedown', () => {
-                    card.style.transform = 'scale(0.97)';
-                });
-                
-                card.addEventListener('mouseup', () => {
-                    card.style.transform = '';
-                });
-                
-                card.addEventListener('mouseleave', () => {
-                    card.style.transform = '';
-                });
-            });
             
-            console.log('Eventos do app inicializados com sucesso');
+            // QR Code no bottom nav
+            const qrCodeBtn = document.querySelector('.nav-item[style*="top: -20px"]');
+            if (qrCodeBtn) {
+                qrCodeBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    alert('Funcionalidade: Abrir QR Code do Pix');
+                });
+            }
+        }
+        
+        function initAppEvents() {
+            console.log('Inicializando todos os eventos do app...');
+            
+            // Inicializar carrossel do saldo
+            initBalanceCarousel();
+            
+            // Inicializar modais
+            initModals();
+            
+            // Inicializar eventos de clique
+            initClickEvents();
+            
+            console.log('Todos os eventos do app foram inicializados com sucesso!');
         }
         
         // ==============================================
-        // INFORMAÇÕES DE DEBUG
+        // FUNÇÕES DE DEBUG
         // ==============================================
         console.log('Credenciais válidas para teste:');
         console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo');
