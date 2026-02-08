@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicPay - Pix</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Cores atualizadas do PicPay - mais escuras */
+        :root {
+            --picpay-green: #1abc9c;
+            --picpay-dark-green: #16a085;
+            --picpay-darker-green: #0d8b71;
+            --picpay-black: #1a1a1a;
+            --picpay-gray: #3a3a3a;
+            --picpay-light-gray: #f5f5f5;
+            --picpay-white: #ffffff;
+            --picpay-yellow: #ffc107;
+            --picpay-blue: #007bff;
+            --picpay-red: #dc3545;
+            --picpay-purple: #6f42c1;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--picpay-light-gray);
+            color: var(--picpay-black);
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding-bottom: 90px;
+        }
+
+        /* Splash Screen - Tela de Entrada */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--picpay-green);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: logoFloat 2s ease-in-out infinite;
+        }
+
+        .picpay-logo {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            letter-spacing: -1px;
+        }
+
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .loading-dots {
+            display: flex;
+            margin-top: 40px;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: loadingDot 1.4s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .powered-by {
+            position: absolute;
+            bottom: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Tela de Login */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--picpay-green);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 20px;
+        }
+
+        .login-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 25px;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.5s ease;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo {
+            color: var(--picpay-green);
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: var(--picpay-gray);
+            font-size: 0.95rem;
+        }
+
+        .login-form {
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--picpay-black);
+            font-size: 0.95rem;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #fafafa;
+            color: var(--picpay-black);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--picpay-green);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--picpay-gray);
+            font-size: 1.1rem;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--picpay-gray);
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--picpay-green);
+        }
+
+        .forgot-password {
+            color: var(--picpay-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .forgot-password:hover {
+            color: var(--picpay-dark-green);
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--picpay-green);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-button:hover {
+            background-color: var(--picpay-dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: var(--picpay-gray);
+            font-size: 0.9rem;
+        }
+
+        .signup-link {
+            color: var(--picpay-green);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .signup-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--picpay-red);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Conteúdo principal - Tela do Pix */
+        .main-content {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .main-content.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Header Pix - Estilo similar à home */
+        .pix-header {
+            background-color: var(--picpay-white);
+            padding: 15px 20px 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .time-display {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--picpay-black);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            color: var(--picpay-black);
+            font-size: 1.1rem;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--picpay-red);
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Header do Pix */
+        .pix-title-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .pix-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--picpay-black);
+            margin-bottom: 5px;
+        }
+
+        .pix-subtitle {
+            color: var(--picpay-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Main Container Pix */
+        .pix-container {
+            padding: 0 20px;
+        }
+
+        /* Seção de Saldo Pix */
+        .pix-balance-section {
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
+            border-radius: var(--radius);
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .pix-balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .pix-balance-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .pix-balance-info {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        /* Opções do Pix */
+        .pix-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pix-option {
+            background-color: var(--picpay-white);
+            border-radius: var(--radius);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            color: var(--picpay-black);
+        }
+
+        .pix-option:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pix-option-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
+        }
+
+        .pix-option-label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* Formulário de Pix */
+        .pix-form-section {
+            background-color: var(--picpay-white);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .pix-form-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--picpay-black);
+            text-align: center;
+        }
+
+        /* Ações do Pix */
+        .pix-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pix-action-btn {
+            background-color: var(--picpay-white);
+            border: 2px solid var(--picpay-green);
+            color: var(--picpay-green);
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pix-action-btn:hover {
+            background-color: var(--picpay-green);
+            color: white;
+        }
+
+        /* Contatos recentes */
+        .recent-contacts {
+            margin-bottom: 30px;
+        }
+
+        .contacts-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--picpay-black);
+        }
+
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .contact-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f0f0;
+        }
+
+        .contact-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Botões de ação */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background-color: var(--picpay-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--picpay-dark-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--picpay-black);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-block {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: var(--picpay-white);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+        }
+
+        .close-modal {
+            background: #f5f5f5;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--picpay-gray);
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: #e9e9e9;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* QR Code Scanner */
+        .qr-scanner {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #f0f0f0 25%, #e0e0e0 25%, #e0e0e0 50%, #f0f0f0 50%, #f0f0f0 75%, #e0e0e0 75%);
+            background-size: 20px 20px;
+            margin: 0 auto 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--picpay-green);
+        }
+
+        /* Navegação Inferior */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--picpay-white);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            color: var(--picpay-gray);
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: var(--picpay-green);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes loadingDot {
+            0%, 100% { 
+                transform: scale(1);
+                background-color: rgba(255, 255, 255, 0.7);
+            }
+            50% { 
+                transform: scale(1.3);
+                background-color: rgba(255, 255, 255, 1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .pix-options {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .contacts-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .picpay-logo {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pix-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .contacts-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .pix-balance-value {
+                font-size: 2rem;
+            }
+            
+            .picpay-logo {
+                font-size: 3rem;
+            }
+            
+            .logo-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .login-logo {
+                font-size: 2rem;
+            }
+            
+            .login-title {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Splash Screen - Tela de Entrada -->
+    <div class="splash-screen" id="splash-screen">
+        <div class="logo-container">
+            <div class="picpay-logo">PicPay</div>
+            <div class="logo-subtitle">SEU DINHEIRO RENDE MAIS</div>
+        </div>
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+        <div class="powered-by">by PicPay © 2023</div>
+    </div>
+
+    <!-- Tela de Login -->
+    <div class="login-screen" id="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="login-logo">PicPay</div>
+                <h1 class="login-title">Bem-vindo de volta</h1>
+                <p class="login-subtitle">Faça login para acessar sua conta</p>
+            </div>
+            
+            <div class="login-error" id="login-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="error-message">CPF ou senha incorretos</span>
+            </div>
+            
+            <form class="login-form" id="login-form">
+                <div class="form-group">
+                    <label for="cpf" class="form-label">CPF</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="cpf" class="form-input" placeholder="Digite seu CPF" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Senha</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" class="form-input" placeholder="Digite sua senha" required>
+                        <button type="button" class="password-toggle" id="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="remember-forgot">
+                    <label class="remember-me">
+                        <input type="checkbox" id="remember-me" checked>
+                        <span>Lembrar-me</span>
+                    </label>
+                    <a href="esquecer-senha.html" class="forgot-password">Esqueci minha senha</a>
+                </div>
+                
+                <button type="submit" class="login-button">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Entrar na minha conta
+                </button>
+            </form>
+            
+            <div class="login-footer">
+                <span>Ainda não tem uma conta?</span>
+                <a href="cadastro.html" class="signup-link">Cadastre-se agora</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tela do Pix -->
+    <div class="main-content" id="main-content">
+        <!-- Header Pix -->
+        <header class="pix-header">
+            <div class="header-top">
+                <div class="time-display" id="current-time">17:09</div>
+                <div class="header-actions">
+                    <div class="notification-badge">
+                        <i class="fas fa-bluetooth"></i>
+                    </div>
+                    <i class="fas fa-wifi"></i>
+                </div>
+            </div>
+            
+            <div class="pix-title-section">
+                <h1 class="pix-title">Pix</h1>
+                <p class="pix-subtitle">Transfira instantaneamente</p>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal do Pix -->
+        <main class="pix-container">
+            <!-- Saldo do Pix -->
+            <section class="pix-balance-section" id="pix-balance-section">
+                <div class="pix-balance-label">Saldo disponível para Pix</div>
+                <div class="pix-balance-value">R$ <span id="pix-balance">1.568,42</span></div>
+                <div class="pix-balance-info">Disponível 24h por dia, todos os dias</div>
+            </section>
+
+            <!-- Opções do Pix -->
+            <section class="pix-options">
+                <a href="#" class="pix-option" id="pagar-pix">
+                    <div class="pix-option-icon">
+                        <i class="fas fa-qrcode"></i>
+                    </div>
+                    <span class="pix-option-label">Pagar com QR Code</span>
+                </a>
+                
+                <a href="#" class="pix-option" id="cobrar-pix">
+                    <div class="pix-option-icon">
+                        <i class="fas fa-hand-holding-usd"></i>
+                    </div>
+                    <span class="pix-option-label">Cobrar</span>
+                </a>
+                
+                <a href="#" class="pix-option" id="transferir-pix">
+                    <div class="pix-option-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <span class="pix-option-label">Transferir</span>
+                </a>
+            </section>
+
+            <!-- Formulário de Transferência (inicialmente escondido) -->
+            <section class="pix-form-section" id="transfer-form" style="display: none;">
+                <h2 class="pix-form-title">Transferir com Pix</h2>
+                
+                <div class="form-group">
+                    <label for="pix-key-type" class="form-label">Chave Pix</label>
+                    <select id="pix-key-type" class="form-input">
+                        <option value="cpf">CPF/CNPJ</option>
+                        <option value="email">E-mail</option>
+                        <option value="phone">Telefone</option>
+                        <option value="random">Chave Aleatória</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pix-key" class="form-label">Digite a chave Pix</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-key input-icon"></i>
+                        <input type="text" id="pix-key" class="form-input" placeholder="Ex: 111.222.333-44">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pix-value" class="form-label">Valor</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-money-bill-wave input-icon"></i>
+                        <input type="text" id="pix-value" class="form-input" placeholder="R$ 0,00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pix-description" class="form-label">Descrição (opcional)</label>
+                    <input type="text" id="pix-description" class="form-input" placeholder="Ex: Pagamento de conta">
+                </div>
+                
+                <button class="btn btn-primary btn-block" id="confirm-pix-transfer">
+                    <i class="fas fa-check-circle"></i>
+                    Continuar
+                </button>
+            </section>
+
+            <!-- Ações do Pix -->
+            <section class="pix-actions">
+                <button class="pix-action-btn" id="scan-qr-btn">
+                    <i class="fas fa-camera"></i>
+                    Ler QR Code
+                </button>
+                
+                <button class="pix-action-btn" id="my-keys-btn">
+                    <i class="fas fa-key"></i>
+                    Minhas chaves
+                </button>
+            </section>
+
+            <!-- Contatos recentes -->
+            <section class="recent-contacts">
+                <h3 class="contacts-title">Contatos recentes</h3>
+                <div class="contacts-grid">
+                    <div class="contact-item" data-cpf="11122233344">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Administrador" class="contact-avatar">
+                        <span class="contact-name">Administrador</span>
+                    </div>
+                    <div class="contact-item" data-cpf="49058911837">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Enzo" class="contact-avatar">
+                        <span class="contact-name">Enzo Silva</span>
+                    </div>
+                    <!-- Adicione mais contatos conforme necessário -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Navegação Inferior -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Início</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-wallet nav-icon"></i>
+                <span class="nav-label">Carteira</span>
+            </a>
+            <a href="#" class="nav-item active" style="position: relative; top: -20px;">
+                <div style="background: var(--picpay-green); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <span class="nav-label">Pix</span>
+            </a>
+            <a href="notificacoes.html" class="nav-item">
+                <i class="fas fa-bell nav-icon"></i>
+                <span class="nav-label">Notificações</span>
+            </a>
+            <a href="mais.html" class="nav-item">
+                <i class="fas fa-ellipsis-h nav-icon"></i>
+                <span class="nav-label">Mais</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Modal para enviar Pix -->
+    <div class="modal" id="send-pix-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirmar Pix</h2>
+                <button class="close-modal" id="close-send-pix-modal">&times;</button>
+            </div>
+            
+            <div id="pix-confirmation-details">
+                <!-- Os detalhes do Pix serão inseridos aqui via JavaScript -->
+            </div>
+            
+            <div class="form-group">
+                <label for="pix-password" class="form-label">Senha do PicPay</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" id="pix-password" class="form-input" placeholder="Digite sua senha">
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-pix">Cancelar</button>
+                <button class="btn btn-primary" id="confirm-pix">Confirmar Pix</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal QR Code Scanner -->
+    <div class="modal" id="qr-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Ler QR Code</h2>
+                <button class="close-modal" id="close-qr-modal">&times;</button>
+            </div>
+            
+            <div class="qr-scanner">
+                <div class="qr-placeholder">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <p>Aponte a câmera para o QR Code Pix</p>
+                <p style="font-size: 0.85rem; color: var(--picpay-gray); margin-top: 10px;">
+                    Ou <a href="#" id="enter-manually">insira manualmente</a>
+                </p>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="close-qr-scanner">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Pix realizado com sucesso -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Pix realizado!</h2>
+                <button class="close-modal" id="close-success-modal">&times;</button>
+            </div>
+            
+            <div style="text-align: center; padding: 20px;">
+                <div style="width: 80px; height: 80px; background-color: var(--picpay-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 2.5rem;">
+                    <i class="fas fa-check"></i>
+                </div>
+                
+                <h3 style="margin-bottom: 10px; color: var(--picpay-green);" id="success-amount">R$ 0,00</h3>
+                <p style="margin-bottom: 5px; font-weight: 600;" id="success-recipient">Para: Nome do destinatário</p>
+                <p style="color: var(--picpay-gray); font-size: 0.9rem;" id="success-description">Descrição do Pix</p>
+                
+                <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; margin-top: 20px; text-align: left;">
+                    <p style="margin-bottom: 8px; font-size: 0.9rem;">
+                        <strong>ID da transação:</strong> 
+                        <span id="transaction-id">PIX-2023-123456789</span>
+                    </p>
+                    <p style="margin-bottom: 8px; font-size: 0.9rem;">
+                        <strong>Data e hora:</strong> 
+                        <span id="transaction-date">09/02/2023 17:09:45</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="btn btn-primary" id="close-success">Concluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==============================================
+        // CREDENCIAIS DE LOGIN (COM MAIS USUÁRIOS)
+        // ==============================================
+        const validCredentials = [
+            {
+                cpf: '49058911837',
+                cpfFormatted: '490.589.118-37',
+                password: '1814Enzo',
+                defaultName: 'Enzo Silva',
+                defaultPhoto: 'https://randomuser.me/api/portraits/men/32.jpg',
+                defaultBalance: '1.568,42'
+            },
+            {
+                cpf: '11122233344',
+                cpfFormatted: '111.222.333-44',
+                password: 'adm',
+                defaultName: 'Administrador',
+                defaultPhoto: 'https://randomuser.me/api/portraits/men/1.jpg',
+                defaultBalance: '5.000,00'
+            },
+            {
+                cpf: '22233344455',
+                cpfFormatted: '222.333.444-55',
+                password: '123456',
+                defaultName: 'Maria Santos',
+                defaultPhoto: 'https://randomuser.me/api/portraits/women/44.jpg',
+                defaultBalance: '3.250,75'
+            },
+            {
+                cpf: '33344455566',
+                cpfFormatted: '333.444.555-66',
+                password: 'picpay2023',
+                defaultName: 'João Oliveira',
+                defaultPhoto: 'https://randomuser.me/api/portraits/men/22.jpg',
+                defaultBalance: '8.900,20'
+            }
+        ];
+        
+        // ==============================================
+        // VARIÁVEIS GLOBAIS
+        // ==============================================
+        let currentUser = null;
+        let transferData = null; // Dados da transferência em andamento
+        
+        // ==============================================
+        // ELEMENTOS DO DOM
+        // ==============================================
+        // Telas
+        const splashScreen = document.getElementById('splash-screen');
+        const loginScreen = document.getElementById('login-screen');
+        const mainContent = document.getElementById('main-content');
+        
+        // Login
+        const loginForm = document.getElementById('login-form');
+        const cpfInput = document.getElementById('cpf');
+        const passwordInput = document.getElementById('password');
+        const togglePasswordBtn = document.getElementById('toggle-password');
+        const loginError = document.getElementById('login-error');
+        const errorMessage = document.getElementById('error-message');
+        const rememberMeCheckbox = document.getElementById('remember-me');
+        
+        // Dados do usuário
+        const userNameElement = document.getElementById('user-name');
+        const userAccountElement = document.getElementById('user-account');
+        const profilePicElement = document.getElementById('profile-pic');
+        const currentTimeElement = document.getElementById('current-time');
+        const pixBalanceElement = document.getElementById('pix-balance');
+        
+        // Formulário de transferência
+        const transferForm = document.getElementById('transfer-form');
+        const pixKeyType = document.getElementById('pix-key-type');
+        const pixKeyInput = document.getElementById('pix-key');
+        const pixValueInput = document.getElementById('pix-value');
+        const pixDescriptionInput = document.getElementById('pix-description');
+        const confirmPixTransferBtn = document.getElementById('confirm-pix-transfer');
+        
+        // Botões de ação
+        const transferirPixBtn = document.getElementById('transferir-pix');
+        const scanQrBtn = document.getElementById('scan-qr-btn');
+        const pagarPixBtn = document.getElementById('pagar-pix');
+        const cobrarPixBtn = document.getElementById('cobrar-pix');
+        const myKeysBtn = document.getElementById('my-keys-btn');
+        
+        // Contatos
+        const contactItems = document.querySelectorAll('.contact-item');
+        
+        // Modais
+        const sendPixModal = document.getElementById('send-pix-modal');
+        const qrModal = document.getElementById('qr-modal');
+        const successModal = document.getElementById('success-modal');
+        
+        // Botões dos modais
+        const closeSendPixModal = document.getElementById('close-send-pix-modal');
+        const closeQrModal = document.getElementById('close-qr-modal');
+        const closeSuccessModal = document.getElementById('close-success-modal');
+        const cancelPixBtn = document.getElementById('cancel-pix');
+        const confirmPixBtn = document.getElementById('confirm-pix');
+        const closeQrScannerBtn = document.getElementById('close-qr-scanner');
+        const closeSuccessBtn = document.getElementById('close-success');
+        const enterManuallyLink = document.getElementById('enter-manually');
+        
+        // Elementos de confirmação
+        const pixConfirmationDetails = document.getElementById('pix-confirmation-details');
+        const pixPasswordInput = document.getElementById('pix-password');
+        
+        // Elementos do modal de sucesso
+        const successAmount = document.getElementById('success-amount');
+        const successRecipient = document.getElementById('success-recipient');
+        const successDescription = document.getElementById('success-description');
+        const transactionId = document.getElementById('transaction-id');
+        const transactionDate = document.getElementById('transaction-date');
+        
+        // ==============================================
+        // INICIALIZAÇÃO DA PÁGINA
+        // ==============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página Pix carregada - verificando login...');
+            
+            // Verificar se já está logado
+            const loggedInUserCPF = localStorage.getItem('picpay_logged_in_user');
+            
+            if (loggedInUserCPF) {
+                console.log('Usuário encontrado no localStorage:', loggedInUserCPF);
+                
+                // Encontrar o usuário nas credenciais
+                currentUser = validCredentials.find(cred => cred.cpf === loggedInUserCPF);
+                
+                if (currentUser) {
+                    console.log('Usuário autenticado:', currentUser.cpfFormatted);
+                    
+                    // Carregar dados do usuário
+                    loadUserData();
+                    
+                    // Mostrar conteúdo principal diretamente
+                    splashScreen.style.display = 'none';
+                    loginScreen.style.display = 'none';
+                    mainContent.classList.add('visible');
+                    
+                    // Atualizar horário
+                    updateTime();
+                    setInterval(updateTime, 60000);
+                    
+                    // Inicializar todos os eventos do app
+                    initPixEvents();
+                    return;
+                } else {
+                    console.log('Usuário não encontrado nas credenciais, limpando localStorage...');
+                    localStorage.removeItem('picpay_logged_in_user');
+                }
+            }
+            
+            // Se não estiver logado, mostrar splash screen
+            console.log('Nenhum usuário logado, mostrando tela de login...');
+            setTimeout(() => {
+                splashScreen.classList.add('hidden');
+                
+                setTimeout(() => {
+                    loginScreen.classList.remove('hidden');
+                }, 500);
+            }, 2000);
+            
+            // Inicializar eventos de login
+            initLoginEvents();
+        });
+        
+        // ==============================================
+        // FUNÇÕES DE LOGIN
+        // ==============================================
+        function initLoginEvents() {
+            // Alternar visibilidade da senha
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                const icon = this.querySelector('i');
+                if (type === 'text') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+            
+            // Formatar CPF enquanto digita
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 3) {
+                    value = value.substring(0, 3) + '.' + value.substring(3);
+                }
+                if (value.length > 7) {
+                    value = value.substring(0, 7) + '.' + value.substring(7);
+                }
+                if (value.length > 11) {
+                    value = value.substring(0, 11) + '-' + value.substring(11, 13);
+                }
+                
+                e.target.value = value;
+            });
+            
+            // Processar login
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const cpf = cpfInput.value.replace(/\D/g, '');
+                const password = passwordInput.value.trim();
+                
+                if (!cpf || cpf.length !== 11) {
+                    showError('Por favor, insira um CPF válido (11 dígitos)');
+                    return;
+                }
+                
+                if (!password) {
+                    showError('Por favor, insira sua senha');
+                    return;
+                }
+                
+                const user = validCredentials.find(cred => 
+                    cred.cpf === cpf && cred.password === password
+                );
+                
+                if (user) {
+                    currentUser = user;
+                    console.log('Login bem-sucedido para:', user.cpfFormatted);
+                    
+                    // Salvar estado de login
+                    if (rememberMeCheckbox.checked) {
+                        localStorage.setItem('picpay_logged_in_user', user.cpf);
+                        console.log('Estado de login salvo no localStorage');
+                    }
+                    
+                    // Login bem-sucedido
+                    loginSuccess();
+                } else {
+                    showError('CPF ou senha incorretos');
+                }
+            });
+            
+            // Permitir login com Enter
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            // Pular splash screen se o usuário clicar nela
+            splashScreen.addEventListener('click', () => {
+                splashScreen.classList.add('hidden');
+                setTimeout(() => {
+                    loginScreen.classList.remove('hidden');
+                }, 500);
+            });
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            loginError.style.display = 'flex';
+            
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 5000);
+        }
+        
+        function loginSuccess() {
+            loginScreen.classList.add('hidden');
+            
+            // Carregar dados do usuário
+            loadUserData();
+            
+            // Mostrar conteúdo principal
+            setTimeout(() => {
+                mainContent.classList.add('visible');
+                
+                // Atualizar horário
+                updateTime();
+                setInterval(updateTime, 60000);
+                
+                // Inicializar todos os eventos do Pix
+                initPixEvents();
+            }, 500);
+        }
+        
+        // ==============================================
+        // FUNÇÕES DE DADOS DO USUÁRIO
+        // ==============================================
+        function loadUserData() {
+            if (!currentUser) {
+                console.error('Nenhum usuário atual para carregar dados');
+                return;
+            }
+            
+            const userKey = `picpay_user_${currentUser.cpf}`;
+            console.log('Carregando dados para usuário:', userKey);
+            
+            // Verificar se existem dados salvos
+            const savedData = localStorage.getItem(userKey);
+            
+            if (savedData) {
+                try {
+                    const userData = JSON.parse(savedData);
+                    console.log('Dados encontrados no localStorage:', userData);
+                    
+                    // Atualizar saldo do Pix
+                    if (userData.balance) {
+                        pixBalanceElement.textContent = userData.balance;
+                    }
+                    
+                } catch (error) {
+                    console.error('Erro ao parsear dados do localStorage:', error);
+                    loadDefaultData();
+                }
+            } else {
+                console.log('Nenhum dado salvo encontrado, carregando dados padrão');
+                loadDefaultData();
+            }
+        }
+        
+        function loadDefaultData() {
+            if (!currentUser) return;
+            
+            pixBalanceElement.textContent = currentUser.defaultBalance;
+            
+            console.log('Dados padrão carregados para:', currentUser.cpfFormatted);
+            
+            // Salvar dados padrão no localStorage
+            saveUserData();
+        }
+        
+        function saveUserData() {
+            if (!currentUser) {
+                console.error('Nenhum usuário atual para salvar dados');
+                return;
+            }
+            
+            const userKey = `picpay_user_${currentUser.cpf}`;
+            
+            const userData = {
+                cpf: currentUser.cpf,
+                name: currentUser.defaultName,
+                account: 'Conta',
+                balance: pixBalanceElement.textContent,
+                photo: currentUser.defaultPhoto,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            localStorage.setItem(userKey, JSON.stringify(userData));
+            console.log('Dados salvos no localStorage para:', userKey, userData);
+        }
+        
+        // ==============================================
+        // FUNÇÕES DO PIX
+        // ==============================================
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            currentTimeElement.textContent = `${hours}:${minutes}`;
+        }
+        
+        // Formatar valor monetário
+        function formatCurrency(value) {
+            // Remove tudo que não é número ou vírgula
+            let cleanValue = value.replace(/[^\d,]/g, '');
+            
+            // Se não tiver vírgula, adiciona ",00"
+            if (!cleanValue.includes(',')) {
+                cleanValue += ',00';
+            }
+            
+            // Garante que tenha 2 casas decimais
+            const parts = cleanValue.split(',');
+            if (parts[1].length === 1) parts[1] += '0';
+            if (parts[1].length > 2) parts[1] = parts[1].substring(0, 2);
+            
+            return `${parts[0]},${parts[1]}`;
+        }
+        
+        // Converter valor para número
+        function parseCurrency(value) {
+            const cleanValue = value.replace(/[^\d,]/g, '');
+            const parts = cleanValue.split(',');
+            const reais = parseInt(parts[0].replace(/\D/g, '') || '0');
+            const centavos = parseInt(parts[1] || '0');
+            
+            return reais + (centavos / 100);
+        }
+        
+        // Encontrar usuário por CPF
+        function findUserByCpf(cpf) {
+            return validCredentials.find(user => user.cpf === cpf.replace(/\D/g, ''));
+        }
+        
+        // Atualizar saldo de um usuário
+        function updateUserBalance(cpf, amount, isAddition = true) {
+            const userKey = `picpay_user_${cpf}`;
+            const savedData = localStorage.getItem(userKey);
+            
+            if (savedData) {
+                try {
+                    const userData = JSON.parse(savedData);
+                    
+                    // Converte o saldo atual para número
+                    const currentBalance = parseCurrency(userData.balance);
+                    
+                    // Calcula novo saldo
+                    const newBalance = isAddition 
+                        ? currentBalance + amount 
+                        : currentBalance - amount;
+                    
+                    // Formata o novo saldo
+                    const formattedBalance = newBalance.toFixed(2).replace('.', ',');
+                    
+                    // Atualiza os dados
+                    userData.balance = formattedBalance;
+                    userData.lastUpdate = new Date().toISOString();
+                    
+                    // Salva de volta no localStorage
+                    localStorage.setItem(userKey, JSON.stringify(userData));
+                    
+                    console.log(`Saldo do usuário ${cpf} atualizado: ${formattedBalance}`);
+                    return true;
+                    
+                } catch (error) {
+                    console.error('Erro ao atualizar saldo:', error);
+                    return false;
+                }
+            }
+            
+            return false;
+        }
+        
+        // Mostrar modal de confirmação do Pix
+        function showPixConfirmation(recipient, amount, description) {
+            transferData = {
+                recipientCpf: recipient.cpf,
+                recipientName: recipient.defaultName,
+                amount: amount,
+                description: description || 'Transferência Pix',
+                date: new Date().toISOString()
+            };
+            
+            // Preenche os detalhes no modal
+            pixConfirmationDetails.innerHTML = `
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 2.5rem; color: var(--picpay-green); margin-bottom: 10px;">
+                        R$ ${amount.toFixed(2).replace('.', ',')}
+                    </div>
+                    <p style="margin-bottom: 5px; font-weight: 600;">Para: ${recipient.defaultName}</p>
+                    <p style="color: var(--picpay-gray); font-size: 0.9rem;">${description || 'Transferência Pix'}</p>
+                </div>
+            `;
+            
+            // Limpa a senha
+            pixPasswordInput.value = '';
+            
+            // Mostra o modal
+            sendPixModal.style.display = 'flex';
+        }
+        
+        // Processar transferência Pix
+        function processPixTransfer() {
+            if (!transferData) {
+                alert('Dados da transferência não encontrados.');
+                return;
+            }
+            
+            // Verifica se o usuário tem saldo suficiente
+            const currentBalance = parseCurrency(pixBalanceElement.textContent);
+            if (currentBalance < transferData.amount) {
+                alert('Saldo insuficiente para realizar a transferência.');
+                sendPixModal.style.display = 'none';
+                return;
+            }
+            
+            // 1. Subtrai o valor do saldo do remetente (usuário atual)
+            updateUserBalance(currentUser.cpf, transferData.amount, false);
+            
+            // 2. Adiciona o valor ao saldo do destinatário
+            updateUserBalance(transferData.recipientCpf, transferData.amount, true);
+            
+            // 3. Atualiza o saldo exibido na tela
+            const newBalance = currentBalance - transferData.amount;
+            pixBalanceElement.textContent = newBalance.toFixed(2).replace('.', ',');
+            
+            // 4. Salva os dados do usuário atual
+            saveUserData();
+            
+            // 5. Gera ID da transação
+            const transactionIdText = `PIX-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+            
+            // 6. Formata data e hora
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('pt-BR');
+            const formattedTime = now.toLocaleTimeString('pt-BR');
+            
+            // 7. Preenche modal de sucesso
+            successAmount.textContent = `R$ ${transferData.amount.toFixed(2).replace('.', ',')}`;
+            successRecipient.textContent = `Para: ${transferData.recipientName}`;
+            successDescription.textContent = transferData.description;
+            transactionId.textContent = transactionIdText;
+            transactionDate.textContent = `${formattedDate} ${formattedTime}`;
+            
+            // 8. Fecha modal de confirmação e abre modal de sucesso
+            sendPixModal.style.display = 'none';
+            successModal.style.display = 'flex';
+            
+            // 9. Limpa os dados da transferência
+            transferData = null;
+            
+            // 10. Reseta o formulário
+            transferForm.style.display = 'none';
+            pixKeyInput.value = '';
+            pixValueInput.value = '';
+            pixDescriptionInput.value = '';
+            
+            console.log(`Pix realizado com sucesso! Transferido R$ ${transferData.amount} para ${transferData.recipientName}`);
+        }
+        
+        // ==============================================
+        // EVENTOS DO PIX
+        // ==============================================
+        function initPixEvents() {
+            console.log('Inicializando eventos do Pix...');
+            
+            // Atualizar horário
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Botão "Transferir"
+            transferirPixBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                transferForm.style.display = 'block';
+                
+                // Rola a página para o formulário
+                transferForm.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Botão "Pagar com QR Code"
+            pagarPixBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Funcionalidade: Pagar com QR Code');
+            });
+            
+            // Botão "Cobrar"
+            cobrarPixBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Funcionalidade: Cobrar com Pix');
+            });
+            
+            // Botão "Ler QR Code"
+            scanQrBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                qrModal.style.display = 'flex';
+            });
+            
+            // Botão "Minhas chaves"
+            myKeysBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert(`Suas chaves Pix:\nCPF: ${currentUser.cpfFormatted}\nE-mail: ${currentUser.cpf}@picpay.com\nTelefone: (11) 9${currentUser.cpf.substring(9)}`);
+            });
+            
+            // Formatar valor enquanto digita
+            pixValueInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/[^\d,]/g, '');
+                
+                // Adiciona "R$ " no início
+                if (!value.startsWith('R$ ')) {
+                    value = 'R$ ' + value;
+                }
+                
+                e.target.value = value;
+            });
+            
+            // Formatar CPF enquanto digita (se for tipo CPF)
+            pixKeyInput.addEventListener('input', function(e) {
+                if (pixKeyType.value === 'cpf') {
+                    let value = e.target.value.replace(/\D/g, '');
+                    
+                    if (value.length > 3) {
+                        value = value.substring(0, 3) + '.' + value.substring(3);
+                    }
+                    if (value.length > 7) {
+                        value = value.substring(0, 7) + '.' + value.substring(7);
+                    }
+                    if (value.length > 11) {
+                        value = value.substring(0, 11) + '-' + value.substring(11, 13);
+                    }
+                    
+                    e.target.value = value;
+                }
+            });
+            
+            // Confirmar transferência
+            confirmPixTransferBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Validações
+                const keyType = pixKeyType.value;
+                const keyValue = pixKeyInput.value.trim();
+                const amountValue = pixValueInput.value.trim();
+                const description = pixDescriptionInput.value.trim();
+                
+                if (!keyValue) {
+                    alert('Por favor, informe a chave Pix.');
+                    return;
+                }
+                
+                if (!amountValue || amountValue === 'R$ ') {
+                    alert('Por favor, informe o valor.');
+                    return;
+                }
+                
+                // Converte o valor para número
+                const amount = parseCurrency(amountValue);
+                
+                if (amount <= 0) {
+                    alert('O valor deve ser maior que zero.');
+                    return;
+                }
+                
+                // Verifica se o valor é muito alto (limite fictício)
+                if (amount > 5000) {
+                    alert('O valor máximo por Pix é R$ 5.000,00.');
+                    return;
+                }
+                
+                // Busca o destinatário
+                let recipient = null;
+                
+                if (keyType === 'cpf') {
+                    const cpf = keyValue.replace(/\D/g, '');
+                    recipient = findUserByCpf(cpf);
+                    
+                    if (!recipient) {
+                        alert('CPF não encontrado. Certifique-se de que o destinatário está cadastrado no PicPay.');
+                        return;
+                    }
+                    
+                    // Não permite enviar para si mesmo
+                    if (recipient.cpf === currentUser.cpf) {
+                        alert('Você não pode enviar Pix para si mesmo.');
+                        return;
+                    }
+                } else {
+                    alert(`Transferência para chave do tipo "${keyType}" em desenvolvimento. Use CPF para testar.`);
+                    return;
+                }
+                
+                // Mostra confirmação
+                showPixConfirmation(recipient, amount, description);
+            });
+            
+            // Contatos recentes - clicar para preencher automaticamente
+            contactItems.forEach(contact => {
+                contact.addEventListener('click', function() {
+                    const cpf = this.getAttribute('data-cpf');
+                    const recipient = findUserByCpf(cpf);
+                    
+                    if (recipient) {
+                        // Preenche automaticamente o formulário
+                        pixKeyType.value = 'cpf';
+                        pixKeyInput.value = recipient.cpfFormatted;
+                        transferForm.style.display = 'block';
+                        
+                        // Rola para o formulário
+                        transferForm.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+            
+            // Eventos dos modais
+            function closeAllModals() {
+                sendPixModal.style.display = 'none';
+                qrModal.style.display = 'none';
+                successModal.style.display = 'none';
+                pixPasswordInput.value = '';
+            }
+            
+            // Fechar modais
+            closeSendPixModal.addEventListener('click', closeAllModals);
+            closeQrModal.addEventListener('click', closeAllModals);
+            closeSuccessModal.addEventListener('click', closeAllModals);
+            cancelPixBtn.addEventListener('click', closeAllModals);
+            closeQrScannerBtn.addEventListener('click', closeAllModals);
+            closeSuccessBtn.addEventListener('click', closeAllModals);
+            
+            // Fechar modal ao clicar fora
+            window.addEventListener('click', (event) => {
+                if (event.target === sendPixModal || event.target === qrModal || event.target === successModal) {
+                    closeAllModals();
+                }
+            });
+            
+            // Link "inserir manualmente" no modal do QR
+            enterManuallyLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                qrModal.style.display = 'none';
+                transferForm.style.display = 'block';
+                transferForm.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Confirmar Pix (com senha)
+            confirmPixBtn.addEventListener('click', function() {
+                const password = pixPasswordInput.value.trim();
+                
+                if (!password) {
+                    alert('Por favor, digite sua senha.');
+                    return;
+                }
+                
+                // Verifica a senha
+                if (password !== currentUser.password) {
+                    alert('Senha incorreta. Tente novamente.');
+                    return;
+                }
+                
+                // Processa o Pix
+                processPixTransfer();
+            });
+            
+            // Permitir Enter para confirmar Pix
+            pixPasswordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmPixBtn.click();
+                }
+            });
+            
+            console.log('Eventos do Pix inicializados com sucesso!');
+        }
+        
+        // ==============================================
+        // FUNÇÕES DE DEBUG
+        // ==============================================
+        console.log('Credenciais válidas para teste:');
+        console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo');
+        console.log('2. CPF: 111.222.333-44 / Senha: adm');
+        console.log('3. CPF: 222.333.444-55 / Senha: 123456');
+        console.log('4. CPF: 333.444.555-66 / Senha: picpay2023');
+        console.log('\nPara fazer logout, digite no console:');
+        console.log('logoutPicPay();');
+        
+        // Função de logout global
+        window.logoutPicPay = function() {
+            if (currentUser) {
+                console.log('Fazendo logout do usuário:', currentUser.cpfFormatted);
+            }
+            localStorage.removeItem('picpay_logged_in_user');
+            alert('Logout realizado! A página será recarregada.');
+            location.reload();
+        };
+        
+        // Função para ver dados salvos
+        window.verDadosSalvos = function() {
+            if (currentUser) {
+                const userKey = `picpay_user_${currentUser.cpf}`;
+                const savedData = localStorage.getItem(userKey);
+                if (savedData) {
+                    console.log('Dados salvos para', currentUser.cpfFormatted, ':', JSON.parse(savedData));
+                } else {
+                    console.log('Nenhum dado salvo encontrado para', currentUser.cpfFormatted);
+                }
+            } else {
+                console.log('Nenhum usuário logado no momento');
+            }
+        };
+        
+        // Função para ver todos os usuários cadastrados
+        window.verTodosUsuarios = function() {
+            console.log('Usuários cadastrados no sistema:');
+            validCredentials.forEach(user => {
+                const userKey = `picpay_user_${user.cpf}`;
+                const savedData = localStorage.getItem(userKey);
+                if (savedData) {
+                    const userData = JSON.parse(savedData);
+                    console.log(`${user.cpfFormatted}: ${userData.name} - Saldo: R$ ${userData.balance}`);
+                } else {
+                    console.log(`${user.cpfFormatted}: ${user.defaultName} - Saldo padrão: R$ ${user.defaultBalance}`);
+                }
+            });
+        };
+    </script>
+</body>
+</html>
