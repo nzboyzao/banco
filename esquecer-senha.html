@@ -126,6 +126,7 @@
             background-color: var(--picpay-green);
             z-index: 2;
             transition: var(--transition);
+            width: 0%;
         }
 
         .step {
@@ -848,6 +849,8 @@
         function validateCPF() {
             const cpf = cpfInput.value.replace(/\D/g, '');
             
+            console.log('Validando CPF:', cpf); // DEBUG
+            
             // Validar formato
             if (cpf.length !== 11) {
                 showError('Por favor, digite um CPF válido de 11 dígitos.');
@@ -1012,7 +1015,7 @@
             
             if (password !== confirmPassword) {
                 resetPasswordBtn.disabled = true;
-                confirmPasswordInput.style.borderColor = var('--picpay-red');
+                confirmPasswordInput.style.borderColor = '#dc3545';
                 return;
             }
             
@@ -1081,45 +1084,72 @@
             }
         }
 
-        // Navegação entre passos
+        // Navegação entre passos - FUNÇÃO CORRIGIDA
         function nextStep() {
+            console.log('nextStep chamado, currentStep:', currentStep); // DEBUG
+            
             if (currentStep >= 3) return;
             
-            // Atualizar estado atual
-            steps[currentStep - 1].classList.remove('active');
-            steps[currentStep - 1].classList.add('completed');
+            // Atualizar estado atual - CORREÇÃO AQUI
+            // Remover 'active' do passo atual
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
             
+            // Adicionar 'completed' ao passo atual
+            document.getElementById(`step-${currentStep}`).classList.add('completed');
+            
+            // Incrementar passo
             currentStep++;
             
-            steps[currentStep - 1].classList.add('active');
+            // Adicionar 'active' ao novo passo
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
             updateProgressBar();
             
-            // Mostrar formulário correspondente
+            // Mostrar formulário correspondente - CORREÇÃO AQUI
             formSteps.forEach(step => step.classList.remove('active'));
             document.getElementById(`step${currentStep}-form`).classList.add('active');
             
             // Limpar mensagens
             hideMessages();
+            
+            console.log('Novo currentStep:', currentStep); // DEBUG
         }
 
         function previousStep() {
+            console.log('previousStep chamado, currentStep:', currentStep); // DEBUG
+            
             if (currentStep <= 1) return;
             
-            steps[currentStep - 1].classList.remove('active');
+            // Remover 'active' do passo atual - CORREÇÃO AQUI
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            
+            // Remover 'completed' do passo anterior
+            document.getElementById(`step-${currentStep-1}`).classList.remove('completed');
+            
+            // Decrementar passo
             currentStep--;
-            steps[currentStep - 1].classList.add('active');
+            
+            // Adicionar 'active' ao passo anterior
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
             updateProgressBar();
             
+            // Mostrar formulário correspondente - CORREÇÃO AQUI
             formSteps.forEach(step => step.classList.remove('active'));
             document.getElementById(`step${currentStep}-form`).classList.add('active');
             
             hideMessages();
+            
+            console.log('Novo currentStep:', currentStep); // DEBUG
         }
 
-        // Atualizar barra de progresso
+        // Atualizar barra de progresso - FUNÇÃO CORRIGIDA
         function updateProgressBar() {
-            const width = ((currentStep - 1) / 2) * 100;
-            progressBar.style.width = `${width}%`;
+            // Calcular a porcentagem baseada no passo atual
+            // Passo 1: 0%, Passo 2: 50%, Passo 3: 100%
+            const widthPercentage = ((currentStep - 1) / 2) * 100;
+            progressBar.style.width = `${widthPercentage}%`;
+            console.log('Progress bar atualizada para:', widthPercentage + '%'); // DEBUG
         }
 
         // Mostrar/esconder mensagens
@@ -1148,7 +1178,7 @@
         }
 
         // Inicializar
-        init();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
