@@ -1332,6 +1332,53 @@
     </div>
 
     <script>
+        // ==============================================
+        // CREDENCIAIS DE LOGIN - APENAS 4 PAIRES FUNCIONAM
+        // ==============================================
+        // CPF e senhas que funcionam:
+        // 1. CPF: 490.589.118-37 / Senha: 1814Enzo
+        // 2. CPF: 111.222.333-44 / Senha: adm
+        // 3. CPF: (VOCÊ PODE ADICIONAR AQUI DEPOIS) / Senha: (VOCÊ PODE ADICIONAR AQUI DEPOIS)
+        // 4. CPF: (VOCÊ PODE ADICIONAR AQUI DEPOIS) / Senha: (VOCÊ PODE ADICIONAR AQUI DEPOIS)
+        // ==============================================
+        
+        const validCredentials = [
+            {
+                cpf: '49058911837', // CPF sem formatação
+                cpfFormatted: '490.589.118-37', // CPF formatado
+                password: '1814Enzo',
+                defaultName: 'Enzo Silva',
+                defaultPhoto: 'https://randomuser.me/api/portraits/men/32.jpg',
+                defaultBalance: '1.250,75'
+            },
+            {
+                cpf: '11122233344',
+                cpfFormatted: '111.222.333-44',
+                password: 'adm',
+                defaultName: 'Administrador',
+                defaultPhoto: 'https://randomuser.me/api/portraits/men/1.jpg',
+                defaultBalance: '5.000,00'
+            },
+            // ADICIONE O TERCEIRO USUÁRIO AQUI:
+            // {
+            //     cpf: 'SEU_CPF_AQUI_SEM_PONTOS',
+            //     cpfFormatted: 'SEU.CPF.FORMATADO.AQUI',
+            //     password: 'SUA_SENHA_AQUI',
+            //     defaultName: 'NOME_DO_USUARIO',
+            //     defaultPhoto: 'URL_DA_FOTO',
+            //     defaultBalance: 'SALDO_INICIAL'
+            // },
+            // ADICIONE O QUARTO USUÁRIO AQUI:
+            // {
+            //     cpf: 'SEU_CPF_AQUI_SEM_PONTOS',
+            //     cpfFormatted: 'SEU.CPF.FORMATADO.AQUI',
+            //     password: 'SUA_SENHA_AQUI',
+            //     defaultName: 'NOME_DO_USUARIO',
+            //     defaultPhoto: 'URL_DA_FOTO',
+            //     defaultBalance: 'SALDO_INICIAL'
+            // }
+        ];
+        
         // Elementos da splash screen e login
         const splashScreen = document.getElementById('splash-screen');
         const loginScreen = document.getElementById('login-screen');
@@ -1345,14 +1392,17 @@
         const loginError = document.getElementById('login-error');
         const errorMessage = document.getElementById('error-message');
         
+        // Variável para armazenar o usuário atual
+        let currentUser = null;
+        
         // Mostrar splash screen por 2 segundos, depois mostrar tela de login
         setTimeout(() => {
             splashScreen.classList.add('hidden');
             
             setTimeout(() => {
                 loginScreen.classList.remove('hidden');
-            }, 500); // Aguardar a animação de fade out terminar
-        }, 2000); // 2 segundos
+            }, 500);
+        }, 2000);
         
         // Alternar visibilidade da senha
         togglePasswordBtn.addEventListener('click', function() {
@@ -1391,11 +1441,11 @@
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const cpf = cpfInput.value.trim();
+            const cpf = cpfInput.value.replace(/\D/g, ''); // Remove formatação
             const password = passwordInput.value.trim();
             
             // Validação simples
-            if (!cpf || cpf.length < 14) {
+            if (!cpf || cpf.length !== 11) {
                 showError('Por favor, insira um CPF válido (11 dígitos)');
                 return;
             }
@@ -1405,8 +1455,19 @@
                 return;
             }
             
-            // Simular processamento de login
-            simulateLogin();
+            // Verificar credenciais
+            const user = validCredentials.find(cred => 
+                cred.cpf === cpf && cred.password === password
+            );
+            
+            if (user) {
+                // Login bem-sucedido
+                currentUser = user;
+                loginSuccess();
+            } else {
+                // Login falhou
+                showError('CPF ou senha incorretos');
+            }
         });
         
         function showError(message) {
@@ -1419,40 +1480,17 @@
             }, 5000);
         }
         
-        function simulateLogin() {
-            // Simular chamada de API com delay
-            const loginButton = loginForm.querySelector('.login-button');
-            const originalText = loginButton.innerHTML;
+        function loginSuccess() {
+            // Esconder tela de login
+            loginScreen.classList.add('hidden');
             
-            // Mostrar loading
-            loginButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
-            loginButton.disabled = true;
+            // Carregar dados do usuário
+            loadUserData();
             
-            // Simular delay de rede
+            // Mostrar conteúdo principal
             setTimeout(() => {
-                // Login sempre bem sucedido (aceita qualquer CPF/senha)
-                // Mostrar sucesso
-                loginButton.innerHTML = '<i class="fas fa-check"></i> Login realizado!';
-                loginButton.style.backgroundColor = '#28a745';
-                
-                // Simular transição para o app
-                setTimeout(() => {
-                    // Esconder tela de login
-                    loginScreen.classList.add('hidden');
-                    
-                    // Mostrar conteúdo principal
-                    setTimeout(() => {
-                        mainContent.classList.add('visible');
-                        
-                        // Restaurar botão de login
-                        setTimeout(() => {
-                            loginButton.innerHTML = originalText;
-                            loginButton.disabled = false;
-                            loginButton.style.backgroundColor = '';
-                        }, 500);
-                    }, 500);
-                }, 1000);
-            }, 1500);
+                mainContent.classList.add('visible');
+            }, 500);
         }
         
         // Permitir login com Enter
@@ -1480,6 +1518,49 @@
         // Atualizar a cada minuto
         updateTime();
         setInterval(updateTime, 60000);
+        
+        // Carregar dados do usuário do LocalStorage
+        function loadUserData() {
+            if (!currentUser) return;
+            
+            // Chave única para cada usuário baseada no CPF
+            const userKey = `picpay_user_${currentUser.cpf}`;
+            
+            // Tentar carregar dados salvos
+            const savedData = localStorage.getItem(userKey);
+            
+            if (savedData) {
+                // Se houver dados salvos, usar eles
+                const userData = JSON.parse(savedData);
+                userNameElement.textContent = userData.name || currentUser.defaultName;
+                userAccountElement.textContent = userData.account || 'Conta • Empresas';
+                balanceElement.textContent = userData.balance || currentUser.defaultBalance;
+                profilePicElement.src = userData.photo || currentUser.defaultPhoto;
+            } else {
+                // Se não houver dados salvos, usar defaults
+                userNameElement.textContent = currentUser.defaultName;
+                userAccountElement.textContent = 'Conta • Empresas';
+                balanceElement.textContent = currentUser.defaultBalance;
+                profilePicElement.src = currentUser.defaultPhoto;
+            }
+        }
+        
+        // Salvar dados do usuário no LocalStorage
+        function saveUserData() {
+            if (!currentUser) return;
+            
+            const userKey = `picpay_user_${currentUser.cpf}`;
+            
+            const userData = {
+                name: userNameElement.textContent,
+                account: userAccountElement.textContent,
+                balance: balanceElement.textContent,
+                photo: profilePicElement.src,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            localStorage.setItem(userKey, JSON.stringify(userData));
+        }
         
         // Botões de edição
         const editNameBtn = document.getElementById('edit-name-btn');
@@ -1512,30 +1593,10 @@
         const photoUrlInput = document.getElementById('photo-url');
         const photoUploadInput = document.getElementById('photo-upload');
 
-        // Carregar dados do LocalStorage
-        function loadUserData() {
-            const savedName = localStorage.getItem('picpayUserName');
-            const savedAccount = localStorage.getItem('picpayUserAccount');
-            const savedBalance = localStorage.getItem('picpayBalance');
-            const savedPhoto = localStorage.getItem('picpayProfilePhoto');
-            
-            if (savedName) userNameElement.textContent = savedName;
-            if (savedAccount) {
-                userAccountElement.textContent = savedAccount;
-                userAccountInput.value = savedAccount;
-            }
-            if (savedBalance) balanceElement.textContent = savedBalance;
-            if (savedPhoto) profilePicElement.src = savedPhoto;
-        }
-
-        // Salvar dados no LocalStorage
-        function saveToLocalStorage(key, value) {
-            localStorage.setItem(key, value);
-        }
-
         // Abrir modais
         editNameBtn.addEventListener('click', () => {
             newNameInput.value = userNameElement.textContent;
+            userAccountInput.value = userAccountElement.textContent;
             nameModal.style.display = 'flex';
         });
 
@@ -1573,8 +1634,7 @@
             if (newName) {
                 userNameElement.textContent = newName;
                 userAccountElement.textContent = newAccount;
-                saveToLocalStorage('picpayUserName', newName);
-                saveToLocalStorage('picpayUserAccount', newAccount);
+                saveUserData(); // Salvar para o usuário atual
                 closeAllModals();
             }
         });
@@ -1586,7 +1646,7 @@
                 const formattedBalance = newBalance.replace(/[^\d,]/g, '');
                 if (formattedBalance) {
                     balanceElement.textContent = formattedBalance;
-                    saveToLocalStorage('picpayBalance', formattedBalance);
+                    saveUserData(); // Salvar para o usuário atual
                     closeAllModals();
                 }
             }
@@ -1601,7 +1661,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     profilePicElement.src = e.target.result;
-                    saveToLocalStorage('picpayProfilePhoto', e.target.result);
+                    saveUserData(); // Salvar para o usuário atual
                     closeAllModals();
                 };
                 reader.readAsDataURL(file);
@@ -1610,7 +1670,7 @@
                 const img = new Image();
                 img.onload = function() {
                     profilePicElement.src = newPhotoUrl;
-                    saveToLocalStorage('picpayProfilePhoto', newPhotoUrl);
+                    saveUserData(); // Salvar para o usuário atual
                     closeAllModals();
                 };
                 img.onerror = function() {
@@ -1653,11 +1713,6 @@
             });
         });
 
-        // Carregar dados ao iniciar
-        window.addEventListener('DOMContentLoaded', () => {
-            loadUserData();
-        });
-
         // Pular splash screen se o usuário clicar nela
         splashScreen.addEventListener('click', () => {
             splashScreen.classList.add('hidden');
@@ -1666,9 +1721,11 @@
             }, 500);
         });
         
-        // Pular login para testes (opcional)
-        // Descomente a linha abaixo para ir direto para o app
-        // setTimeout(() => { splashScreen.classList.add('hidden'); loginScreen.classList.add('hidden'); mainContent.classList.add('visible'); }, 100);
+        // Test credentials display (para fins de demonstração)
+        console.log('Credenciais válidas para teste:');
+        console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo');
+        console.log('2. CPF: 111.222.333-44 / Senha: adm');
+        console.log('3. e 4. Você pode adicionar no código (linhas 1872-1890)');
     </script>
 </body>
 </html>
