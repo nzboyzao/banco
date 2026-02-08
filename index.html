@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PicPay - Login</title>
+    <title>PicPay - Home</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Cores atualizadas do PicPay - mais escuras */
@@ -36,6 +36,7 @@
             color: var(--picpay-black);
             line-height: 1.5;
             overflow-x: hidden;
+            padding-bottom: 90px;
         }
 
         /* Splash Screen - Tela de Entrada */
@@ -322,7 +323,6 @@
             display: none;
             opacity: 0;
             animation: fadeIn 0.5s ease forwards;
-            padding-bottom: 90px;
         }
 
         .main-content.visible {
@@ -330,101 +330,37 @@
             opacity: 1;
         }
 
-        /* Header PicPay */
+        /* Header PicPay - NOVO DESIGN */
         .picpay-header {
-            background-color: var(--picpay-green);
-            padding: 15px 0 20px;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background-color: var(--picpay-white);
+            padding: 15px 20px 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 1000;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .time-display {
             font-size: 0.9rem;
             font-weight: 600;
-            color: var(--picpay-white);
-            background: rgba(0, 0, 0, 0.15);
+            color: var(--picpay-black);
             padding: 5px 15px;
             border-radius: 20px;
         }
 
         .header-actions {
             display: flex;
-            gap: 20px;
-            color: var(--picpay-white);
-            font-size: 1.2rem;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
             gap: 15px;
-        }
-
-        .profile-pic {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .profile-pic:hover {
-            transform: scale(1.05);
-            border-color: var(--picpay-white);
-        }
-
-        .user-details h1 {
-            font-size: 1.3rem;
-            color: var(--picpay-white);
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-
-        .user-details p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .edit-icon {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .edit-icon:hover {
-            background: rgba(255, 255, 255, 0.3);
+            color: var(--picpay-black);
+            font-size: 1.1rem;
         }
 
         .notification-badge {
@@ -439,8 +375,8 @@
             background-color: var(--picpay-red);
             color: white;
             font-size: 0.7rem;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -448,36 +384,165 @@
             font-weight: bold;
         }
 
-        /* Main Content */
-        .main-container {
-            padding: 20px;
+        /* Barra de pesquisa e ícones - NOVO */
+        .search-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        /* Balance Card */
-        .balance-card {
+        .search-bar {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #f0f0f0;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            background-color: #f8f8f8;
+            color: var(--picpay-black);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--picpay-green);
+            background-color: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--picpay-gray);
+            font-size: 1rem;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f8f8;
+            color: var(--picpay-black);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .icon-circle:hover {
+            background-color: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        /* User info - NOVO DESIGN */
+        .user-info-section {
+            padding: 15px 20px 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #f0f0f0;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+        }
+
+        .user-details h1 {
+            font-size: 1.1rem;
+            color: var(--picpay-black);
+            margin-bottom: 3px;
+            font-weight: 700;
+        }
+
+        .user-details p {
+            color: var(--picpay-gray);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-account-btn {
+            background-color: var(--picpay-green);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .add-account-btn:hover {
+            background-color: var(--picpay-dark-green);
+        }
+
+        /* Main Content */
+        .main-container {
+            padding: 0;
+        }
+
+        /* Balance Carousel - NOVO DESIGN */
+        .balance-section {
+            padding: 20px 20px 0;
+        }
+
+        .balance-carousel-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .balance-carousel {
+            display: flex;
+            overflow: hidden;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .balance-slide {
+            min-width: 100%;
             background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
             border-radius: var(--radius);
             padding: 25px;
             color: white;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .balance-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -30%;
-            width: 150px;
-            height: 150px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
+            transition: transform 0.5s ease;
         }
 
         .balance-label {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             opacity: 0.9;
             margin-bottom: 10px;
             display: flex;
@@ -486,7 +551,7 @@
         }
 
         .balance-value {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
             margin-bottom: 15px;
             display: flex;
@@ -494,30 +559,11 @@
             gap: 10px;
         }
 
-        .balance-edit {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .balance-edit:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(15deg);
-        }
-
         .balance-info {
             background: rgba(255, 255, 255, 0.15);
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-radius: 10px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -529,24 +575,152 @@
             font-weight: 600;
         }
 
-        /* Services Grid */
-        .services-section {
-            margin-bottom: 30px;
+        .carousel-arrows {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            padding: 0 10px;
+            pointer-events: none;
+        }
+
+        .carousel-arrow {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--picpay-black);
+            cursor: pointer;
+            transition: var(--transition);
+            pointer-events: auto;
+            font-size: 1rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-arrow:hover {
+            background-color: white;
+            transform: scale(1.1);
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carousel-dot.active {
+            background-color: var(--picpay-green);
+            transform: scale(1.2);
+        }
+
+        /* Cartão de Crédito - NOVO DESIGN */
+        .credit-card-section {
+            background-color: var(--picpay-white);
+            padding: 20px;
+            margin: 0 20px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--picpay-green);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .card-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--picpay-black);
+            letter-spacing: 1px;
+        }
+
+        .card-type {
+            background-color: var(--picpay-light-gray);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--picpay-gray);
+        }
+
+        .card-access-btn {
+            background-color: var(--picpay-green);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .card-access-btn:hover {
+            background-color: var(--picpay-dark-green);
+        }
+
+        /* Pro dia a dia - CARROSSEL */
+        .daily-section {
+            padding: 0 20px 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .section-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin-bottom: 20px;
             color: var(--picpay-black);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
         }
 
         .see-all {
             color: var(--picpay-green);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 600;
             text-decoration: none;
             transition: var(--transition);
@@ -556,160 +730,78 @@
             opacity: 0.8;
         }
 
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
+        .daily-carousel-container {
+            position: relative;
         }
 
-        .service-card {
-            background-color: var(--picpay-white);
-            border-radius: var(--radius);
-            padding: 20px 10px;
+        .daily-carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 15px;
+            padding: 5px 0 15px;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+        .daily-carousel::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
+        }
+
+        .daily-item {
+            min-width: 80px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 12px;
+            gap: 8px;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: var(--shadow);
             text-decoration: none;
             color: var(--picpay-black);
         }
 
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        .daily-item:hover {
+            transform: translateY(-3px);
         }
 
-        .service-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+        .daily-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
+            font-size: 1.4rem;
             color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .pix-bg {
-            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
-        }
-
-        .pay-bg {
-            background: linear-gradient(135deg, var(--picpay-blue), #0056b3);
-        }
-
-        .transfer-bg {
-            background: linear-gradient(135deg, var(--picpay-purple), #5a3d8a);
-        }
-
-        .deposit-bg {
-            background: linear-gradient(135deg, #ff6b6b, #ff4757);
-        }
-
-        .service-card span {
+        .daily-label {
+            font-size: 0.75rem;
             font-weight: 600;
-            font-size: 0.85rem;
             text-align: center;
+            line-height: 1.2;
         }
 
-        /* Credit Card Section */
-        .credit-card-section {
-            background-color: var(--picpay-white);
-            border-radius: var(--radius);
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow);
-        }
+        /* Cores para os ícones do carrossel */
+        .pix-bg { background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green)); }
+        .payment-bg { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .recharge-bg { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .piggy-bg { background: linear-gradient(135deg, #ff6b6b, #ff4757); }
+        .credit-bg { background: linear-gradient(135deg, #ff9f43, #ff7f00); }
+        .loan-bg { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .crypto-bg { background: linear-gradient(135deg, #f1c40f, #f39c12); }
+        .pot-bg { background: linear-gradient(135deg, #1abc9c, #16a085); }
+        .invest-bg { background: linear-gradient(135deg, #34495e, #2c3e50); }
+        .vehicle-bg { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .more-bg { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
 
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--picpay-black);
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 15px;
-        }
-
-        .card-action-btn {
-            background-color: #f8f9fa;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--picpay-gray);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .card-action-btn:hover {
-            background-color: #e9ecef;
-        }
-
-        .card-details {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-number {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--picpay-black);
-            letter-spacing: 1px;
-        }
-
-        .card-type {
-            background-color: var(--picpay-light-gray);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--picpay-gray);
-        }
-
-        .card-limits {
-            display: flex;
-            gap: 30px;
-        }
-
-        .limit-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .limit-label {
-            font-size: 0.8rem;
-            color: var(--picpay-gray);
-            margin-bottom: 5px;
-        }
-
-        .limit-value {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--picpay-black);
-        }
-
-        /* Features Section */
+        /* Features Grid - NOVO DESIGN */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 25px;
+            padding: 0 20px 20px;
         }
 
         .feature-card {
@@ -724,6 +816,7 @@
             box-shadow: var(--shadow);
             text-decoration: none;
             color: var(--picpay-black);
+            border-left: 3px solid var(--picpay-green);
         }
 
         .feature-card:hover {
@@ -753,7 +846,7 @@
             color: var(--picpay-gray);
         }
 
-        /* Bottom Navigation */
+        /* Navegação Inferior */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -921,15 +1014,6 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .services-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 15px;
-            }
-            
-            .balance-value {
-                font-size: 2rem;
-            }
-            
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -940,34 +1024,12 @@
         }
 
         @media (max-width: 480px) {
-            .services-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-            
             .features-grid {
                 grid-template-columns: 1fr;
             }
             
             .balance-value {
                 font-size: 1.8rem;
-            }
-            
-            .card-limits {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .header-top {
-                padding: 0 15px;
-            }
-            
-            .header-content {
-                padding: 0 15px;
-            }
-            
-            .main-container {
-                padding: 15px;
             }
             
             .picpay-logo {
@@ -988,6 +1050,16 @@
             
             .login-title {
                 font-size: 1.3rem;
+            }
+            
+            .daily-item {
+                min-width: 70px;
+            }
+            
+            .daily-icon {
+                width: 55px;
+                height: 55px;
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -1064,138 +1136,221 @@
 
     <!-- Conteúdo Principal -->
     <div class="main-content" id="main-content">
-        <!-- Header PicPay -->
+        <!-- Header PicPay - NOVO DESIGN -->
         <header class="picpay-header">
             <div class="header-top">
-                <div class="time-display" id="current-time">14:00</div>
+                <div class="time-display" id="current-time">17:09</div>
                 <div class="header-actions">
                     <div class="notification-badge">
-                        <i class="fas fa-bell"></i>
-                        <span class="badge">3</span>
+                        <i class="fas fa-bluetooth"></i>
                     </div>
-                    <i class="fas fa-qrcode"></i>
+                    <i class="fas fa-wifi"></i>
                 </div>
             </div>
             
-            <div class="header-content">
-                <div class="user-info">
-                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
-                    <div class="user-details">
-                        <h1 id="user-name">Carlos Silva</h1>
-                        <p>
-                            <i class="fas fa-id-card"></i>
-                            <span id="user-account">Conta • Empresas</span>
-                        </p>
+            <!-- Barra de pesquisa e ícones -->
+            <div class="search-bar-container">
+                <div class="search-bar">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Buscar">
+                </div>
+                <div class="header-icons">
+                    <div class="icon-circle">
+                        <i class="fas fa-question"></i>
                     </div>
-                    <button class="edit-icon" id="edit-name-btn">
-                        <i class="fas fa-pen"></i>
-                    </button>
+                    <div class="icon-circle">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <div class="notification-badge icon-circle">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
                 </div>
             </div>
         </header>
 
+        <!-- Informações do usuário -->
+        <div class="user-info-section">
+            <div class="user-info">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
+                <div class="user-details">
+                    <h1 id="user-name">Carlos Silva</h1>
+                    <p>
+                        <i class="fas fa-id-card"></i>
+                        <span id="user-account">Conta</span>
+                    </p>
+                </div>
+            </div>
+            <button class="add-account-btn">
+                <i class="fas fa-plus"></i>
+                Adicionar conta
+            </button>
+        </div>
+
         <!-- Conteúdo Principal -->
         <main class="main-container">
-            <!-- Saldo em Conta -->
-            <section class="balance-card">
-                <div class="balance-label">
-                    <span>Saldo em conta</span>
-                    <span>Serviços: <span class="highlight">100% de CDI</span></span>
-                </div>
-                <div class="balance-value">
-                    R$ <span id="balance">2.547,83</span>
-                    <button class="balance-edit" id="edit-balance-btn">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                </div>
-                <div class="balance-info">
-                    <span>Use cartão de saldo único</span>
-                    <i class="fas fa-chevron-right"></i>
-                </div>
-            </section>
-
-            <!-- Serviços -->
-            <section class="services-section">
-                <h2 class="section-title">
-                    Serviços
-                    <a href="#" class="see-all">Ver todos</a>
-                </h2>
-                <div class="services-grid">
-                    <a href="pix.html" class="service-card">
-                        <div class="service-icon pix-bg">
-                            <i class="fas fa-bolt"></i>
+            <!-- Saldo em Conta - CARROSSEL -->
+            <section class="balance-section">
+                <div class="balance-carousel-container">
+                    <div class="balance-carousel" id="balance-carousel">
+                        <div class="balance-slide">
+                            <div class="balance-label">
+                                <span>Saldo em conta</span>
+                                <span>Rendendo <span class="highlight">110,72% do CDI</span></span>
+                            </div>
+                            <div class="balance-value">
+                                R$ <span id="balance">1.568,42</span>
+                            </div>
+                            <div class="balance-info">
+                                <span>Guardar</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
                         </div>
-                        <span>Pix</span>
-                    </a>
-                    
-                    <a href="pagar.html" class="service-card">
-                        <div class="service-icon pay-bg">
-                            <i class="fas fa-barcode"></i>
+                        <div class="balance-slide">
+                            <div class="balance-label">
+                                <span>Saldo guardado</span>
+                                <span>Rendendo <span class="highlight">115% do CDI</span></span>
+                            </div>
+                            <div class="balance-value">
+                                R$ <span>3.250,00</span>
+                            </div>
+                            <div class="balance-info">
+                                <span>Ver investimentos</span>
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
                         </div>
-                        <span>Pagar</span>
-                    </a>
-                    
-                    <a href="transferir.html" class="service-card">
-                        <div class="service-icon transfer-bg">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <span>Transferir</span>
-                    </a>
-                    
-                    <a href="depositar.html" class="service-card">
-                        <div class="service-icon deposit-bg">
-                            <i class="fas fa-piggy-bank"></i>
-                        </div>
-                        <span>Depositar</span>
-                    </a>
+                    </div>
+                    <div class="carousel-arrows">
+                        <button class="carousel-arrow" id="prev-balance">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="carousel-arrow" id="next-balance">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="carousel-dots" id="balance-dots">
+                        <div class="carousel-dot active"></div>
+                        <div class="carousel-dot"></div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Cartão de Crédito -->
+            <!-- Cartão de Crédito - NOVO DESIGN -->
             <section class="credit-card-section">
                 <div class="card-header">
-                    <h3 class="card-title">Cartão de crédito</h3>
-                    <div class="card-actions">
-                        <button class="card-action-btn">Pagar boleto</button>
-                        <button class="card-action-btn">CDI</button>
-                    </div>
+                    <h3 class="card-title">Cartão</h3>
                 </div>
-                
                 <div class="card-details">
-                    <div class="card-number">**** **** **** 4582</div>
-                    <div class="card-type">Virtual</div>
+                    <div class="card-number">Encontre tudo sobre seu Cartão aqui</div>
                 </div>
-                
-                <div class="card-limits">
-                    <div class="limit-item">
-                        <span class="limit-label">Limite disponível</span>
-                        <span class="limit-value">R$ 1.450,00</span>
-                    </div>
-                    <div class="limit-item">
-                        <span class="limit-label">Fatura atual</span>
-                        <span class="limit-value">R$ 320,50</span>
-                    </div>
-                </div>
-                
-                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
-                    <i class="fas fa-plus-circle"></i> Adicionar cartão
+                <button class="card-access-btn">
+                    <i class="fas fa-credit-card"></i>
+                    Acessar cartão
                 </button>
+            </section>
+
+            <!-- Pro dia a dia - CARROSSEL -->
+            <section class="daily-section">
+                <div class="section-header">
+                    <h2 class="section-title">Pro dia a dia</h2>
+                    <a href="#" class="see-all">Ver todos</a>
+                </div>
+                <div class="daily-carousel-container">
+                    <div class="daily-carousel" id="daily-carousel">
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon pix-bg">
+                                <i class="fas fa-bolt"></i>
+                            </div>
+                            <span class="daily-label">Pix</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon payment-bg">
+                                <i class="fas fa-barcode"></i>
+                            </div>
+                            <span class="daily-label">Pagamentos</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon recharge-bg">
+                                <i class="fas fa-mobile-alt"></i>
+                            </div>
+                            <span class="daily-label">Recarga de Celular</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon piggy-bg">
+                                <i class="fas fa-piggy-bank"></i>
+                            </div>
+                            <span class="daily-label">Cofrinho</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon credit-bg">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <span class="daily-label">Consultar<br>seu crédito</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon loan-bg">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <span class="daily-label">Empréstimo<br>com garantia</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon crypto-bg">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <span class="daily-label">Cripto</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon pot-bg">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <span class="daily-label">Pote da<br>sorte</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon invest-bg">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <span class="daily-label">Investir<br>em CDB</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon vehicle-bg">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <span class="daily-label">Área de<br>veículos</span>
+                        </a>
+                        
+                        <a href="#" class="daily-item">
+                            <div class="daily-icon more-bg">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                            <span class="daily-label">Ver mais<br>opções</span>
+                        </a>
+                    </div>
+                </div>
             </section>
 
             <!-- Mais Funcionalidades -->
             <section class="services-section">
-                <h2 class="section-title">
-                    Pra você
+                <div class="section-header">
+                    <h2 class="section-title">Pra você</h2>
                     <a href="#" class="see-all">Ver todos</a>
-                </h2>
+                </div>
                 <div class="features-grid">
                     <a href="#" class="feature-card">
                         <div class="feature-icon" style="background: linear-gradient(135deg, #ff9f43, #ff7f00);">
-                            <i class="fas fa-gift"></i>
+                            <i class="fas fa-car"></i>
                         </div>
                         <div class="feature-info">
-                            <h3>Cashback</h3>
-                            <p>Ganhe dinheiro de volta</p>
+                            <h3>Carro</h3>
+                            <p>Seguro, financiamento e mais</p>
                         </div>
                     </a>
                     
@@ -1204,28 +1359,28 @@
                             <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="feature-info">
-                            <h3>Investir</h3>
+                            <h3>Investimentos</h3>
                             <p>Renda seus recursos</p>
                         </div>
                     </a>
                     
                     <a href="#" class="feature-card">
                         <div class="feature-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
-                            <i class="fas fa-shield-alt"></i>
+                            <i class="fas fa-walking"></i>
                         </div>
                         <div class="feature-info">
-                            <h3>Seguros</h3>
-                            <p>Proteção para você</p>
+                            <h3>Step</h3>
+                            <p>Movimente-se com saúde</p>
                         </div>
                     </a>
                     
                     <a href="#" class="feature-card">
                         <div class="feature-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
-                            <i class="fas fa-mobile-alt"></i>
+                            <i class="fas fa-sticky-note"></i>
                         </div>
                         <div class="feature-info">
-                            <h3>Recarga</h3>
-                            <p>Celular, transporte</p>
+                            <h3>Nota</h3>
+                            <p>Emita notas fiscais</p>
                         </div>
                     </a>
                 </div>
@@ -1342,7 +1497,7 @@
                 password: '1814Enzo',
                 defaultName: 'Enzo Silva',
                 defaultPhoto: 'https://randomuser.me/api/portraits/men/32.jpg',
-                defaultBalance: '1.250,75'
+                defaultBalance: '1.568,42'
             },
             {
                 cpf: '11122233344',
@@ -1377,6 +1532,14 @@
         const balanceElement = document.getElementById('balance');
         const profilePicElement = document.getElementById('profile-pic');
         const currentTimeElement = document.getElementById('current-time');
+        
+        // ==============================================
+        // CARROSSEL DO SALDO
+        // ==============================================
+        let currentBalanceSlide = 0;
+        const balanceSlides = document.querySelectorAll('.balance-slide');
+        const balanceDots = document.querySelectorAll('.balance-dots .carousel-dot');
+        const balanceCarousel = document.getElementById('balance-carousel');
         
         // ==============================================
         // INICIALIZAÇÃO DA PÁGINA
@@ -1604,7 +1767,7 @@
             if (!currentUser) return;
             
             userNameElement.textContent = currentUser.defaultName;
-            userAccountElement.textContent = 'Conta • Empresas';
+            userAccountElement.textContent = 'Conta';
             balanceElement.textContent = currentUser.defaultBalance;
             profilePicElement.src = currentUser.defaultPhoto;
             
@@ -1645,8 +1808,65 @@
             currentTimeElement.textContent = `${hours}:${minutes}`;
         }
         
+        // Funções do carrossel do saldo
+        function updateBalanceCarousel() {
+            balanceCarousel.style.transform = `translateX(-${currentBalanceSlide * 100}%)`;
+            
+            // Atualizar dots
+            document.querySelectorAll('.balance-dots .carousel-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentBalanceSlide);
+            });
+        }
+        
+        function initBalanceCarousel() {
+            const prevBtn = document.getElementById('prev-balance');
+            const nextBtn = document.getElementById('next-balance');
+            const dotsContainer = document.getElementById('balance-dots');
+            
+            // Criar dots
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < balanceSlides.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = `carousel-dot ${i === 0 ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    currentBalanceSlide = i;
+                    updateBalanceCarousel();
+                });
+                dotsContainer.appendChild(dot);
+            }
+            
+            // Eventos dos botões
+            prevBtn.addEventListener('click', () => {
+                currentBalanceSlide = (currentBalanceSlide - 1 + balanceSlides.length) % balanceSlides.length;
+                updateBalanceCarousel();
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                currentBalanceSlide = (currentBalanceSlide + 1) % balanceSlides.length;
+                updateBalanceCarousel();
+            });
+            
+            // Inicializar carrossel
+            updateBalanceCarousel();
+        }
+        
+        // Função para rolar o carrossel do dia a dia
+        function scrollDailyCarousel(direction) {
+            const carousel = document.getElementById('daily-carousel');
+            const scrollAmount = 200;
+            
+            if (direction === 'left') {
+                carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+        
         function initAppEvents() {
             console.log('Inicializando eventos do app...');
+            
+            // Inicializar carrossel do saldo
+            initBalanceCarousel();
             
             // Botões de edição
             const editNameBtn = document.getElementById('edit-name-btn');
@@ -1679,18 +1899,22 @@
             const photoUrlInput = document.getElementById('photo-url');
             const photoUploadInput = document.getElementById('photo-upload');
 
-            // Abrir modal de editar nome
-            editNameBtn.addEventListener('click', () => {
-                newNameInput.value = userNameElement.textContent;
-                userAccountInput.value = userAccountElement.textContent;
-                nameModal.style.display = 'flex';
-            });
+            // Abrir modal de editar nome (quando existir o botão)
+            if (editNameBtn) {
+                editNameBtn.addEventListener('click', () => {
+                    newNameInput.value = userNameElement.textContent;
+                    userAccountInput.value = userAccountElement.textContent;
+                    nameModal.style.display = 'flex';
+                });
+            }
 
             // Abrir modal de editar saldo
-            editBalanceBtn.addEventListener('click', () => {
-                newBalanceInput.value = balanceElement.textContent;
-                balanceModal.style.display = 'flex';
-            });
+            if (editBalanceBtn) {
+                editBalanceBtn.addEventListener('click', () => {
+                    newBalanceInput.value = balanceElement.textContent;
+                    balanceModal.style.display = 'flex';
+                });
+            }
 
             // Abrir modal de alterar foto
             profilePicElement.addEventListener('click', () => {
@@ -1711,66 +1935,72 @@
             closeBalanceModal.addEventListener('click', closeAllModals);
             closePhotoModal.addEventListener('click', closeAllModals);
             
-            cancelNameBtn.addEventListener('click', closeAllModals);
-            cancelBalanceBtn.addEventListener('click', closeAllModals);
-            cancelPhotoBtn.addEventListener('click', closeAllModals);
+            if (cancelNameBtn) cancelNameBtn.addEventListener('click', closeAllModals);
+            if (cancelBalanceBtn) cancelBalanceBtn.addEventListener('click', closeAllModals);
+            if (cancelPhotoBtn) cancelPhotoBtn.addEventListener('click', closeAllModals);
 
             // Salvar nome
-            saveNameBtn.addEventListener('click', () => {
-                const newName = newNameInput.value.trim();
-                const newAccount = userAccountInput.value;
-                
-                if (newName) {
-                    userNameElement.textContent = newName;
-                    userAccountElement.textContent = newAccount;
-                    saveUserData(); // Salvar alterações
-                    closeAllModals();
-                    alert('Nome atualizado com sucesso!');
-                }
-            });
+            if (saveNameBtn) {
+                saveNameBtn.addEventListener('click', () => {
+                    const newName = newNameInput.value.trim();
+                    const newAccount = userAccountInput.value;
+                    
+                    if (newName) {
+                        userNameElement.textContent = newName;
+                        userAccountElement.textContent = newAccount;
+                        saveUserData(); // Salvar alterações
+                        closeAllModals();
+                        alert('Nome atualizado com sucesso!');
+                    }
+                });
+            }
 
             // Salvar saldo
-            saveBalanceBtn.addEventListener('click', () => {
-                const newBalance = newBalanceInput.value.trim();
-                if (newBalance) {
-                    const formattedBalance = newBalance.replace(/[^\d,]/g, '');
-                    if (formattedBalance) {
-                        balanceElement.textContent = formattedBalance;
-                        saveUserData(); // Salvar alterações
-                        closeAllModals();
-                        alert('Saldo atualizado com sucesso!');
+            if (saveBalanceBtn) {
+                saveBalanceBtn.addEventListener('click', () => {
+                    const newBalance = newBalanceInput.value.trim();
+                    if (newBalance) {
+                        const formattedBalance = newBalance.replace(/[^\d,]/g, '');
+                        if (formattedBalance) {
+                            balanceElement.textContent = formattedBalance;
+                            saveUserData(); // Salvar alterações
+                            closeAllModals();
+                            alert('Saldo atualizado com sucesso!');
+                        }
                     }
-                }
-            });
+                });
+            }
 
             // Salvar foto
-            savePhotoBtn.addEventListener('click', () => {
-                const newPhotoUrl = photoUrlInput.value.trim();
-                const file = photoUploadInput.files[0];
-                
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        profilePicElement.src = e.target.result;
-                        saveUserData(); // Salvar alterações
-                        closeAllModals();
-                        alert('Foto atualizada com sucesso!');
-                    };
-                    reader.readAsDataURL(file);
-                } else if (newPhotoUrl) {
-                    const img = new Image();
-                    img.onload = function() {
-                        profilePicElement.src = newPhotoUrl;
-                        saveUserData(); // Salvar alterações
-                        closeAllModals();
-                        alert('Foto atualizada com sucesso!');
-                    };
-                    img.onerror = function() {
-                        alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
-                    };
-                    img.src = newPhotoUrl;
-                }
-            });
+            if (savePhotoBtn) {
+                savePhotoBtn.addEventListener('click', () => {
+                    const newPhotoUrl = photoUrlInput.value.trim();
+                    const file = photoUploadInput.files[0];
+                    
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            profilePicElement.src = e.target.result;
+                            saveUserData(); // Salvar alterações
+                            closeAllModals();
+                            alert('Foto atualizada com sucesso!');
+                        };
+                        reader.readAsDataURL(file);
+                    } else if (newPhotoUrl) {
+                        const img = new Image();
+                        img.onload = function() {
+                            profilePicElement.src = newPhotoUrl;
+                            saveUserData(); // Salvar alterações
+                            closeAllModals();
+                            alert('Foto atualizada com sucesso!');
+                        };
+                        img.onerror = function() {
+                            alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
+                        };
+                        img.src = newPhotoUrl;
+                    }
+                });
+            }
 
             // Fechar modal ao clicar fora
             window.addEventListener('click', (event) => {
@@ -1780,18 +2010,18 @@
             });
 
             // Simular funcionalidade dos botões
-            document.querySelectorAll('.service-card, .feature-card, .nav-item, .card-action-btn').forEach(button => {
+            document.querySelectorAll('.daily-item, .feature-card, .nav-item, .card-access-btn, .add-account-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     if (button.getAttribute('href') === '#' || button.tagName === 'BUTTON') {
                         e.preventDefault();
-                        const buttonText = button.textContent.trim() || button.querySelector('span')?.textContent || 'este botão';
+                        const buttonText = button.textContent.trim() || button.querySelector('span')?.textContent || button.querySelector('.daily-label')?.textContent || 'este botão';
                         alert(`Funcionalidade do PicPay em desenvolvimento!\nAção: ${buttonText}`);
                     }
                 });
             });
 
             // Efeitos visuais
-            document.querySelectorAll('.service-card, .feature-card').forEach(card => {
+            document.querySelectorAll('.daily-item, .feature-card').forEach(card => {
                 card.addEventListener('mousedown', () => {
                     card.style.transform = 'scale(0.97)';
                 });
