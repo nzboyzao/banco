@@ -992,15 +992,22 @@
             <section class="recent-contacts">
                 <h3 class="contacts-title">Contatos recentes</h3>
                 <div class="contacts-grid">
-                    <div class="contact-item" data-cpf="11122233344">
-                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Administrador" class="contact-avatar">
-                        <span class="contact-name">Administrador</span>
-                    </div>
                     <div class="contact-item" data-cpf="49058911837">
                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Enzo" class="contact-avatar">
                         <span class="contact-name">Enzo Silva</span>
                     </div>
-                    <!-- Adicione mais contatos conforme necessário -->
+                    <div class="contact-item" data-cpf="11122233344">
+                        <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Administrador" class="contact-avatar">
+                        <span class="contact-name">Administrador</span>
+                    </div>
+                    <div class="contact-item" data-cpf="22233344455">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Maria" class="contact-avatar">
+                        <span class="contact-name">Maria Santos</span>
+                    </div>
+                    <div class="contact-item" data-cpf="33344455566">
+                        <img src="https://randomuser.me/api/portraits/men/22.jpg" alt="João" class="contact-avatar">
+                        <span class="contact-name">João Oliveira</span>
+                    </div>
                 </div>
             </section>
         </main>
@@ -1181,11 +1188,8 @@
         const rememberMeCheckbox = document.getElementById('remember-me');
         
         // Dados do usuário
-        const userNameElement = document.getElementById('user-name');
-        const userAccountElement = document.getElementById('user-account');
-        const profilePicElement = document.getElementById('profile-pic');
-        const currentTimeElement = document.getElementById('current-time');
         const pixBalanceElement = document.getElementById('pix-balance');
+        const currentTimeElement = document.getElementById('current-time');
         
         // Formulário de transferência
         const transferForm = document.getElementById('transfer-form');
@@ -1235,19 +1239,19 @@
         // INICIALIZAÇÃO DA PÁGINA
         // ==============================================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('Página Pix carregada - verificando login...');
+            console.log('🚀 Página Pix carregada - verificando login...');
             
             // Verificar se já está logado
             const loggedInUserCPF = localStorage.getItem('picpay_logged_in_user');
             
             if (loggedInUserCPF) {
-                console.log('Usuário encontrado no localStorage:', loggedInUserCPF);
+                console.log('✅ Usuário encontrado no localStorage:', loggedInUserCPF);
                 
                 // Encontrar o usuário nas credenciais
                 currentUser = validCredentials.find(cred => cred.cpf === loggedInUserCPF);
                 
                 if (currentUser) {
-                    console.log('Usuário autenticado:', currentUser.cpfFormatted);
+                    console.log('✅ Usuário autenticado:', currentUser.cpfFormatted);
                     
                     // Carregar dados do usuário
                     loadUserData();
@@ -1265,13 +1269,13 @@
                     initPixEvents();
                     return;
                 } else {
-                    console.log('Usuário não encontrado nas credenciais, limpando localStorage...');
+                    console.log('⚠️ Usuário não encontrado nas credenciais, limpando localStorage...');
                     localStorage.removeItem('picpay_logged_in_user');
                 }
             }
             
             // Se não estiver logado, mostrar splash screen
-            console.log('Nenhum usuário logado, mostrando tela de login...');
+            console.log('⚠️ Nenhum usuário logado, mostrando tela de login...');
             setTimeout(() => {
                 splashScreen.classList.add('hidden');
                 
@@ -1343,12 +1347,12 @@
                 
                 if (user) {
                     currentUser = user;
-                    console.log('Login bem-sucedido para:', user.cpfFormatted);
+                    console.log('✅ Login bem-sucedido para:', user.cpfFormatted);
                     
                     // Salvar estado de login
                     if (rememberMeCheckbox.checked) {
                         localStorage.setItem('picpay_logged_in_user', user.cpf);
-                        console.log('Estado de login salvo no localStorage');
+                        console.log('✅ Estado de login salvo no localStorage');
                     }
                     
                     // Login bem-sucedido
@@ -1407,12 +1411,12 @@
         // ==============================================
         function loadUserData() {
             if (!currentUser) {
-                console.error('Nenhum usuário atual para carregar dados');
+                console.error('❌ Nenhum usuário atual para carregar dados');
                 return;
             }
             
             const userKey = `picpay_user_${currentUser.cpf}`;
-            console.log('Carregando dados para usuário:', userKey);
+            console.log('📂 Carregando dados para usuário:', userKey);
             
             // Verificar se existem dados salvos
             const savedData = localStorage.getItem(userKey);
@@ -1420,19 +1424,20 @@
             if (savedData) {
                 try {
                     const userData = JSON.parse(savedData);
-                    console.log('Dados encontrados no localStorage:', userData);
+                    console.log('✅ Dados encontrados no localStorage:', userData);
                     
                     // Atualizar saldo do Pix
                     if (userData.balance) {
                         pixBalanceElement.textContent = userData.balance;
+                        console.log('✅ Saldo carregado:', userData.balance);
                     }
                     
                 } catch (error) {
-                    console.error('Erro ao parsear dados do localStorage:', error);
+                    console.error('❌ Erro ao parsear dados do localStorage:', error);
                     loadDefaultData();
                 }
             } else {
-                console.log('Nenhum dado salvo encontrado, carregando dados padrão');
+                console.log('⚠️ Nenhum dado salvo encontrado, carregando dados padrão');
                 loadDefaultData();
             }
         }
@@ -1442,7 +1447,7 @@
             
             pixBalanceElement.textContent = currentUser.defaultBalance;
             
-            console.log('Dados padrão carregados para:', currentUser.cpfFormatted);
+            console.log('✅ Dados padrão carregados para:', currentUser.cpfFormatted);
             
             // Salvar dados padrão no localStorage
             saveUserData();
@@ -1450,7 +1455,7 @@
         
         function saveUserData() {
             if (!currentUser) {
-                console.error('Nenhum usuário atual para salvar dados');
+                console.error('❌ Nenhum usuário atual para salvar dados');
                 return;
             }
             
@@ -1459,18 +1464,17 @@
             const userData = {
                 cpf: currentUser.cpf,
                 name: currentUser.defaultName,
-                account: 'Conta',
                 balance: pixBalanceElement.textContent,
                 photo: currentUser.defaultPhoto,
                 lastUpdate: new Date().toISOString()
             };
             
             localStorage.setItem(userKey, JSON.stringify(userData));
-            console.log('Dados salvos no localStorage para:', userKey, userData);
+            console.log('💾 Dados salvos no localStorage para:', userKey, userData);
         }
         
         // ==============================================
-        // FUNÇÕES DO PIX
+        // FUNÇÕES DO PIX - CORRIGIDAS
         // ==============================================
         function updateTime() {
             const now = new Date();
@@ -1479,10 +1483,10 @@
             currentTimeElement.textContent = `${hours}:${minutes}`;
         }
         
-        // Formatar valor monetário
-        function formatCurrency(value) {
+        // Converter valor para número
+        function parseCurrency(value) {
             // Remove tudo que não é número ou vírgula
-            let cleanValue = value.replace(/[^\d,]/g, '');
+            let cleanValue = String(value).replace(/[^\d,]/g, '');
             
             // Se não tiver vírgula, adiciona ",00"
             if (!cleanValue.includes(',')) {
@@ -1491,46 +1495,63 @@
             
             // Garante que tenha 2 casas decimais
             const parts = cleanValue.split(',');
-            if (parts[1].length === 1) parts[1] += '0';
-            if (parts[1].length > 2) parts[1] = parts[1].substring(0, 2);
-            
-            return `${parts[0]},${parts[1]}`;
-        }
-        
-        // Converter valor para número
-        function parseCurrency(value) {
-            const cleanValue = value.replace(/[^\d,]/g, '');
-            const parts = cleanValue.split(',');
             const reais = parseInt(parts[0].replace(/\D/g, '') || '0');
-            const centavos = parseInt(parts[1] || '0');
+            const centavos = parseInt(parts[1]?.substring(0, 2) || '0');
             
             return reais + (centavos / 100);
         }
         
         // Encontrar usuário por CPF
         function findUserByCpf(cpf) {
-            return validCredentials.find(user => user.cpf === cpf.replace(/\D/g, ''));
+            const cleanCpf = cpf.replace(/\D/g, '');
+            console.log('🔍 Buscando usuário com CPF:', cleanCpf);
+            
+            const user = validCredentials.find(user => user.cpf === cleanCpf);
+            
+            if (user) {
+                console.log('✅ Usuário encontrado:', user.defaultName);
+            } else {
+                console.log('❌ Usuário não encontrado');
+            }
+            
+            return user;
         }
         
-        // Atualizar saldo de um usuário
+        // ==============================================
+        // FUNÇÃO CORRIGIDA: ATUALIZAR SALDO DO USUÁRIO
+        // ==============================================
         function updateUserBalance(cpf, amount, isAddition = true) {
             const userKey = `picpay_user_${cpf}`;
             const savedData = localStorage.getItem(userKey);
             
+            console.log(`💸 Atualizando saldo para usuário ${cpf}:`, { 
+                amount, 
+                isAddition, 
+                userKey, 
+                hasSavedData: !!savedData 
+            });
+            
             if (savedData) {
                 try {
                     const userData = JSON.parse(savedData);
+                    console.log('📊 Dados do usuário encontrados:', userData);
                     
                     // Converte o saldo atual para número
                     const currentBalance = parseCurrency(userData.balance);
+                    console.log('💰 Saldo atual (convertido):', currentBalance);
                     
                     // Calcula novo saldo
                     const newBalance = isAddition 
                         ? currentBalance + amount 
                         : currentBalance - amount;
                     
-                    // Formata o novo saldo
-                    const formattedBalance = newBalance.toFixed(2).replace('.', ',');
+                    console.log('🧮 Novo saldo calculado:', newBalance);
+                    
+                    // Formata o novo saldo (garante 2 casas decimais)
+                    const formattedBalance = newBalance.toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).replace('.', ',');
                     
                     // Atualiza os dados
                     userData.balance = formattedBalance;
@@ -1539,19 +1560,57 @@
                     // Salva de volta no localStorage
                     localStorage.setItem(userKey, JSON.stringify(userData));
                     
-                    console.log(`Saldo do usuário ${cpf} atualizado: ${formattedBalance}`);
+                    console.log(`✅ Saldo do usuário ${cpf} atualizado: R$ ${formattedBalance}`);
+                    
+                    // Atualiza o saldo na tela SE for o usuário atual
+                    if (currentUser && cpf === currentUser.cpf) {
+                        pixBalanceElement.textContent = formattedBalance;
+                        console.log('✅ Saldo atualizado na tela do usuário atual');
+                    }
+                    
                     return true;
                     
                 } catch (error) {
-                    console.error('Erro ao atualizar saldo:', error);
+                    console.error('❌ Erro ao atualizar saldo:', error);
                     return false;
+                }
+            } else {
+                console.log(`⚠️ Nenhum dado salvo encontrado para ${cpf}, criando novo registro...`);
+                
+                // Se não encontrar dados, cria um novo registro com saldo padrão
+                const user = validCredentials.find(cred => cred.cpf === cpf);
+                if (user) {
+                    const defaultBalance = parseCurrency(user.defaultBalance);
+                    const newBalance = isAddition 
+                        ? defaultBalance + amount 
+                        : defaultBalance - amount;
+                    
+                    const formattedBalance = newBalance.toLocaleString('pt-BR', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }).replace('.', ',');
+                    
+                    const userData = {
+                        cpf: user.cpf,
+                        name: user.defaultName,
+                        balance: formattedBalance,
+                        photo: user.defaultPhoto,
+                        lastUpdate: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem(userKey, JSON.stringify(userData));
+                    console.log(`✅ Novo registro criado para ${cpf} com saldo: R$ ${formattedBalance}`);
+                    return true;
                 }
             }
             
+            console.log(`❌ Usuário ${cpf} não encontrado nem nas credenciais`);
             return false;
         }
         
-        // Mostrar modal de confirmação do Pix
+        // ==============================================
+        // FUNÇÃO CORRIGIDA: MOSTRAR CONFIRMAÇÃO DO PIX
+        // ==============================================
         function showPixConfirmation(recipient, amount, description) {
             transferData = {
                 recipientCpf: recipient.cpf,
@@ -1561,6 +1620,8 @@
                 date: new Date().toISOString()
             };
             
+            console.log('📋 Dados da transferência:', transferData);
+            
             // Preenche os detalhes no modal
             pixConfirmationDetails.innerHTML = `
                 <div style="text-align: center; margin-bottom: 20px;">
@@ -1568,6 +1629,9 @@
                         R$ ${amount.toFixed(2).replace('.', ',')}
                     </div>
                     <p style="margin-bottom: 5px; font-weight: 600;">Para: ${recipient.defaultName}</p>
+                    <p style="margin-bottom: 5px; color: var(--picpay-gray); font-size: 0.9rem;">
+                        CPF: ${recipient.cpfFormatted}
+                    </p>
                     <p style="color: var(--picpay-gray); font-size: 0.9rem;">${description || 'Transferência Pix'}</p>
                 </div>
             `;
@@ -1579,70 +1643,86 @@
             sendPixModal.style.display = 'flex';
         }
         
-        // Processar transferência Pix
+        // ==============================================
+        // FUNÇÃO CORRIGIDA: PROCESSAR TRANSFERÊNCIA PIX
+        // ==============================================
         function processPixTransfer() {
             if (!transferData) {
-                alert('Dados da transferência não encontrados.');
+                alert('❌ Dados da transferência não encontrados.');
                 return;
             }
             
+            console.log('🔧 Processando transferência Pix:', transferData);
+            
             // Verifica se o usuário tem saldo suficiente
             const currentBalance = parseCurrency(pixBalanceElement.textContent);
+            console.log('💰 Saldo atual do remetente:', currentBalance);
+            
             if (currentBalance < transferData.amount) {
-                alert('Saldo insuficiente para realizar a transferência.');
+                alert('❌ Saldo insuficiente para realizar a transferência.');
                 sendPixModal.style.display = 'none';
                 return;
             }
             
             // 1. Subtrai o valor do saldo do remetente (usuário atual)
-            updateUserBalance(currentUser.cpf, transferData.amount, false);
+            console.log(`💸 Debitando R$ ${transferData.amount} do remetente: ${currentUser.cpf}`);
+            const debitSuccess = updateUserBalance(currentUser.cpf, transferData.amount, false);
+            
+            if (!debitSuccess) {
+                alert('❌ Erro ao debitar valor da sua conta.');
+                sendPixModal.style.display = 'none';
+                return;
+            }
             
             // 2. Adiciona o valor ao saldo do destinatário
-            updateUserBalance(transferData.recipientCpf, transferData.amount, true);
+            console.log(`💰 Creditando R$ ${transferData.amount} para destinatário: ${transferData.recipientCpf}`);
+            const creditSuccess = updateUserBalance(transferData.recipientCpf, transferData.amount, true);
             
-            // 3. Atualiza o saldo exibido na tela
-            const newBalance = currentBalance - transferData.amount;
-            pixBalanceElement.textContent = newBalance.toFixed(2).replace('.', ',');
+            if (!creditSuccess) {
+                alert('❌ Erro ao creditar valor na conta do destinatário.');
+                sendPixModal.style.display = 'none';
+                return;
+            }
             
-            // 4. Salva os dados do usuário atual
+            // 3. Salva os dados do usuário atual
             saveUserData();
             
-            // 5. Gera ID da transação
+            // 4. Gera ID da transação
             const transactionIdText = `PIX-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
             
-            // 6. Formata data e hora
+            // 5. Formata data e hora
             const now = new Date();
             const formattedDate = now.toLocaleDateString('pt-BR');
             const formattedTime = now.toLocaleTimeString('pt-BR');
             
-            // 7. Preenche modal de sucesso
+            // 6. Preenche modal de sucesso
             successAmount.textContent = `R$ ${transferData.amount.toFixed(2).replace('.', ',')}`;
             successRecipient.textContent = `Para: ${transferData.recipientName}`;
             successDescription.textContent = transferData.description;
             transactionId.textContent = transactionIdText;
             transactionDate.textContent = `${formattedDate} ${formattedTime}`;
             
-            // 8. Fecha modal de confirmação e abre modal de sucesso
+            // 7. Fecha modal de confirmação e abre modal de sucesso
             sendPixModal.style.display = 'none';
             successModal.style.display = 'flex';
             
-            // 9. Limpa os dados da transferência
+            // 8. Limpa os dados da transferência
             transferData = null;
             
-            // 10. Reseta o formulário
+            // 9. Reseta o formulário
             transferForm.style.display = 'none';
             pixKeyInput.value = '';
             pixValueInput.value = '';
             pixDescriptionInput.value = '';
             
-            console.log(`Pix realizado com sucesso! Transferido R$ ${transferData.amount} para ${transferData.recipientName}`);
+            console.log(`✅ Pix realizado com sucesso! Transferido R$ ${transferData?.amount} para ${transferData?.recipientName}`);
         }
         
         // ==============================================
         // EVENTOS DO PIX
         // ==============================================
         function initPixEvents() {
-            console.log('Inicializando eventos do Pix...');
+            console.log('⚡ Inicializando eventos do Pix...');
             
             // Atualizar horário
             updateTime();
@@ -1722,27 +1802,30 @@
                 const amountValue = pixValueInput.value.trim();
                 const description = pixDescriptionInput.value.trim();
                 
+                console.log('📝 Validando transferência:', { keyType, keyValue, amountValue, description });
+                
                 if (!keyValue) {
-                    alert('Por favor, informe a chave Pix.');
+                    alert('❌ Por favor, informe a chave Pix.');
                     return;
                 }
                 
                 if (!amountValue || amountValue === 'R$ ') {
-                    alert('Por favor, informe o valor.');
+                    alert('❌ Por favor, informe o valor.');
                     return;
                 }
                 
                 // Converte o valor para número
                 const amount = parseCurrency(amountValue);
+                console.log('💰 Valor convertido:', amount);
                 
                 if (amount <= 0) {
-                    alert('O valor deve ser maior que zero.');
+                    alert('❌ O valor deve ser maior que zero.');
                     return;
                 }
                 
                 // Verifica se o valor é muito alto (limite fictício)
                 if (amount > 5000) {
-                    alert('O valor máximo por Pix é R$ 5.000,00.');
+                    alert('❌ O valor máximo por Pix é R$ 5.000,00.');
                     return;
                 }
                 
@@ -1754,17 +1837,17 @@
                     recipient = findUserByCpf(cpf);
                     
                     if (!recipient) {
-                        alert('CPF não encontrado. Certifique-se de que o destinatário está cadastrado no PicPay.');
+                        alert('❌ CPF não encontrado. Certifique-se de que o destinatário está cadastrado no PicPay.');
                         return;
                     }
                     
                     // Não permite enviar para si mesmo
                     if (recipient.cpf === currentUser.cpf) {
-                        alert('Você não pode enviar Pix para si mesmo.');
+                        alert('❌ Você não pode enviar Pix para si mesmo.');
                         return;
                     }
                 } else {
-                    alert(`Transferência para chave do tipo "${keyType}" em desenvolvimento. Use CPF para testar.`);
+                    alert(`⚠️ Transferência para chave do tipo "${keyType}" em desenvolvimento. Use CPF para testar.`);
                     return;
                 }
                 
@@ -1826,13 +1909,13 @@
                 const password = pixPasswordInput.value.trim();
                 
                 if (!password) {
-                    alert('Por favor, digite sua senha.');
+                    alert('❌ Por favor, digite sua senha.');
                     return;
                 }
                 
                 // Verifica a senha
                 if (password !== currentUser.password) {
-                    alert('Senha incorreta. Tente novamente.');
+                    alert('❌ Senha incorreta. Tente novamente.');
                     return;
                 }
                 
@@ -1847,27 +1930,31 @@
                 }
             });
             
-            console.log('Eventos do Pix inicializados com sucesso!');
+            console.log('✅ Eventos do Pix inicializados com sucesso!');
         }
         
         // ==============================================
-        // FUNÇÕES DE DEBUG
+        // FUNÇÕES DE DEBUG - PARA TESTAR
         // ==============================================
-        console.log('Credenciais válidas para teste:');
-        console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo');
-        console.log('2. CPF: 111.222.333-44 / Senha: adm');
-        console.log('3. CPF: 222.333.444-55 / Senha: 123456');
-        console.log('4. CPF: 333.444.555-66 / Senha: picpay2023');
-        console.log('\nPara fazer logout, digite no console:');
+        console.log('🔑 Credenciais válidas para teste:');
+        console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo / Saldo: R$ 1.568,42');
+        console.log('2. CPF: 111.222.333-44 / Senha: adm / Saldo: R$ 5.000,00');
+        console.log('3. CPF: 222.333.444-55 / Senha: 123456 / Saldo: R$ 3.250,75');
+        console.log('4. CPF: 333.444.555-66 / Senha: picpay2023 / Saldo: R$ 8.900,20');
+        console.log('\n💡 Para fazer logout, digite no console:');
         console.log('logoutPicPay();');
+        console.log('\n📊 Para ver dados salvos:');
+        console.log('verDadosSalvos();');
+        console.log('\n👥 Para ver todos os usuários:');
+        console.log('verTodosUsuarios();');
         
         // Função de logout global
         window.logoutPicPay = function() {
             if (currentUser) {
-                console.log('Fazendo logout do usuário:', currentUser.cpfFormatted);
+                console.log('👋 Fazendo logout do usuário:', currentUser.cpfFormatted);
             }
             localStorage.removeItem('picpay_logged_in_user');
-            alert('Logout realizado! A página será recarregada.');
+            alert('✅ Logout realizado! A página será recarregada.');
             location.reload();
         };
         
@@ -1877,28 +1964,42 @@
                 const userKey = `picpay_user_${currentUser.cpf}`;
                 const savedData = localStorage.getItem(userKey);
                 if (savedData) {
-                    console.log('Dados salvos para', currentUser.cpfFormatted, ':', JSON.parse(savedData));
+                    console.log('📁 Dados salvos para', currentUser.cpfFormatted, ':', JSON.parse(savedData));
                 } else {
-                    console.log('Nenhum dado salvo encontrado para', currentUser.cpfFormatted);
+                    console.log('📭 Nenhum dado salvo encontrado para', currentUser.cpfFormatted);
                 }
             } else {
-                console.log('Nenhum usuário logado no momento');
+                console.log('❌ Nenhum usuário logado no momento');
             }
         };
         
         // Função para ver todos os usuários cadastrados
         window.verTodosUsuarios = function() {
-            console.log('Usuários cadastrados no sistema:');
+            console.log('👥 Usuários cadastrados no sistema:');
+            console.log('====================================');
+            
             validCredentials.forEach(user => {
                 const userKey = `picpay_user_${user.cpf}`;
                 const savedData = localStorage.getItem(userKey);
+                
                 if (savedData) {
                     const userData = JSON.parse(savedData);
                     console.log(`${user.cpfFormatted}: ${userData.name} - Saldo: R$ ${userData.balance}`);
                 } else {
-                    console.log(`${user.cpfFormatted}: ${user.defaultName} - Saldo padrão: R$ ${user.defaultBalance}`);
+                    console.log(`${user.cpfFormatted}: ${user.defaultName} - Saldo padrão: R$ ${user.defaultBalance} (não modificado)`);
                 }
             });
+            
+            console.log('====================================');
+        };
+        
+        // Função para resetar todos os dados
+        window.resetarTodosDados = function() {
+            if (confirm('⚠️ Isso irá APAGAR TODOS os dados salvos! Tem certeza?')) {
+                localStorage.clear();
+                alert('✅ Todos os dados foram apagados! A página será recarregada.');
+                location.reload();
+            }
         };
     </script>
 </body>
