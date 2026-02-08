@@ -447,7 +447,7 @@
             transform: scale(1.05);
         }
 
-        /* User info - NOVO DESIGN */
+        /* User info - NOVO DESIGN (SEM BOTÃO ADICIONAR CONTA) */
         .user-info-section {
             padding: 15px 20px 5px;
             display: flex;
@@ -495,24 +495,7 @@
             gap: 5px;
         }
 
-        .add-account-btn {
-            background-color: var(--picpay-green);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .add-account-btn:hover {
-            background-color: var(--picpay-dark-green);
-        }
+        /* Botão Adicionar conta REMOVIDO */
 
         /* Main Content */
         .main-container {
@@ -546,14 +529,14 @@
             box-sizing: border-box;
         }
 
-        /* Primeiro slide - Saldo */
+        /* Primeiro slide - Saldo (verde) */
         .balance-slide:first-child {
             background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
         }
 
-        /* Segundo slide - Cartão */
+        /* Segundo slide - Cartão (AGORA TAMBÉM VERDE) */
         .balance-slide:nth-child(2) {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
         }
 
         .balance-label {
@@ -563,6 +546,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+
+        /* Botão "Ver saldo" - NOVO */
+        .show-balance-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .show-balance-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .balance-value {
@@ -583,6 +586,12 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .balance-info:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
 
         .card-title {
@@ -599,7 +608,7 @@
 
         .card-access-btn {
             background-color: white;
-            color: #667eea;
+            color: var(--picpay-green);
             border: none;
             padding: 12px 20px;
             border-radius: 12px;
@@ -616,6 +625,7 @@
 
         .card-access-btn:hover {
             background-color: #f8f9fa;
+            transform: translateY(-2px);
         }
 
         .carousel-dots {
@@ -1107,7 +1117,7 @@
             </div>
         </header>
 
-        <!-- Informações do usuário -->
+        <!-- Informações do usuário (SEM BOTÃO ADICIONAR CONTA) -->
         <div class="user-info-section">
             <div class="user-info">
                 <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
@@ -1119,10 +1129,7 @@
                     </p>
                 </div>
             </div>
-            <button class="add-account-btn" id="add-account-btn">
-                <i class="fas fa-plus"></i>
-                Adicionar conta
-            </button>
+            <!-- BOTÃO ADICIONAR CONTA REMOVIDO -->
         </div>
 
         <!-- Conteúdo Principal -->
@@ -1135,18 +1142,21 @@
                         <div class="balance-slide">
                             <div class="balance-label">
                                 <span>Saldo em conta</span>
-                                <span>Rendendo <span class="highlight">110,72% do CDI</span></span>
+                                <button class="show-balance-btn" id="show-balance-btn">
+                                    <i class="fas fa-eye"></i>
+                                    Ver saldo
+                                </button>
                             </div>
-                            <div class="balance-value">
+                            <div class="balance-value" id="balance-value">
                                 R$ <span id="balance">1.568,42</span>
                             </div>
                             <div class="balance-info">
-                                <span>Guardar</span>
+                                <span>Rendendo <span class="highlight">110,72% do CDI</span></span>
                                 <i class="fas fa-chevron-right"></i>
                             </div>
                         </div>
                         
-                        <!-- Segundo slide - Cartão -->
+                        <!-- Segundo slide - Cartão (AGORA VERDE) -->
                         <div class="balance-slide">
                             <div class="card-title">Cartão</div>
                             <div class="card-description">
@@ -1433,6 +1443,7 @@
         let currentBalanceSlide = 0;
         let startX = 0;
         let isDragging = false;
+        let isBalanceVisible = true; // Controla se o saldo está visível ou oculto
         
         // ==============================================
         // ELEMENTOS DO DOM
@@ -1458,14 +1469,15 @@
         const profilePicElement = document.getElementById('profile-pic');
         const currentTimeElement = document.getElementById('current-time');
         const userDetailsElement = document.getElementById('user-details');
+        const balanceValueElement = document.getElementById('balance-value');
         
         // Carrossel
         const balanceCarouselContainer = document.getElementById('balance-carousel-container');
         const balanceCarousel = document.getElementById('balance-carousel');
         const balanceSlides = document.querySelectorAll('.balance-slide');
         
-        // Botões clicáveis
-        const addAccountBtn = document.getElementById('add-account-btn');
+        // Botão "Ver saldo"
+        const showBalanceBtn = document.getElementById('show-balance-btn');
         
         // Modais
         const nameModal = document.getElementById('name-modal');
@@ -1757,6 +1769,23 @@
             currentTimeElement.textContent = `${hours}:${minutes}`;
         }
         
+        // Função para alternar visibilidade do saldo
+        function toggleBalanceVisibility() {
+            isBalanceVisible = !isBalanceVisible;
+            
+            if (isBalanceVisible) {
+                // Mostrar saldo
+                balanceValueElement.style.opacity = '1';
+                balanceElement.textContent = localStorage.getItem(`picpay_user_${currentUser.cpf}_real_balance`) || currentUser.defaultBalance;
+                showBalanceBtn.innerHTML = '<i class="fas fa-eye"></i> Ver saldo';
+            } else {
+                // Ocultar saldo
+                balanceValueElement.style.opacity = '0.3';
+                balanceElement.textContent = '••••';
+                showBalanceBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ver saldo';
+            }
+        }
+        
         // Carrossel do saldo
         function updateBalanceCarousel() {
             balanceCarousel.style.transform = `translateX(-${currentBalanceSlide * 100}%)`;
@@ -1814,11 +1843,29 @@
                 isDragging = false;
             });
             
+            // Botão "Ver saldo" - clicável
+            if (showBalanceBtn) {
+                showBalanceBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Impede que o clique se propague para o carrossel
+                    toggleBalanceVisibility();
+                });
+            }
+            
             // Clique no carrossel para editar saldo (apenas no primeiro slide)
             balanceCarouselContainer.addEventListener('click', (e) => {
-                // Só abre modal se for o primeiro slide (saldo)
-                if (currentBalanceSlide === 0) {
-                    newBalanceInput.value = balanceElement.textContent;
+                // Só abre modal se for o primeiro slide (saldo) e não for clique no botão "Ver saldo"
+                if (currentBalanceSlide === 0 && !e.target.closest('.show-balance-btn')) {
+                    // Primeiro garante que o saldo está visível
+                    isBalanceVisible = true;
+                    balanceValueElement.style.opacity = '1';
+                    showBalanceBtn.innerHTML = '<i class="fas fa-eye"></i> Ver saldo';
+                    
+                    // Salva o saldo real antes de abrir o modal
+                    const realBalance = balanceElement.textContent === '••••' 
+                        ? (localStorage.getItem(`picpay_user_${currentUser.cpf}_real_balance`) || currentUser.defaultBalance)
+                        : balanceElement.textContent;
+                    
+                    newBalanceInput.value = realBalance;
                     balanceModal.style.display = 'flex';
                 }
             });
@@ -1868,6 +1915,8 @@
                         const formattedBalance = newBalance.replace(/[^\d,]/g, '');
                         if (formattedBalance) {
                             balanceElement.textContent = formattedBalance;
+                            // Salva o saldo real para quando estiver oculto
+                            localStorage.setItem(`picpay_user_${currentUser.cpf}_real_balance`, formattedBalance);
                             saveUserData(); // Salvar alterações
                             closeAllModals();
                         }
@@ -1926,23 +1975,15 @@
                 nameModal.style.display = 'flex';
             });
             
-            // Botão Adicionar conta
-            if (addAccountBtn) {
-                addAccountBtn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    alert('Funcionalidade: Adicionar conta');
-                });
-            }
-            
             // Todos os botões clicáveis do app
             const clickableElements = document.querySelectorAll(
-                '.daily-item, .feature-card, .nav-item, .card-access-btn, .icon-circle, .search-input, .see-all'
+                '.daily-item, .feature-card, .nav-item, .card-access-btn, .icon-circle, .search-input, .see-all, .balance-info'
             );
             
             clickableElements.forEach(element => {
                 element.addEventListener('click', function(e) {
                     // Se for um link vazio ou botão, mostrar alerta
-                    if (this.getAttribute('href') === '#' || this.tagName === 'BUTTON' || this.classList.contains('icon-circle')) {
+                    if (this.getAttribute('href') === '#' || this.tagName === 'BUTTON' || this.classList.contains('icon-circle') || this.classList.contains('balance-info')) {
                         e.preventDefault();
                         
                         let actionText = '';
@@ -1961,6 +2002,8 @@
                             else if (iconClass.includes('fa-bell')) actionText = 'Notificações';
                         } else if (this.classList.contains('see-all')) {
                             actionText = 'Ver todos';
+                        } else if (this.classList.contains('balance-info')) {
+                            actionText = 'Ver detalhes do rendimento';
                         }
                         
                         if (actionText) {
