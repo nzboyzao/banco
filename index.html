@@ -1382,24 +1382,20 @@
         // INICIALIZAÇÃO DA PÁGINA
         // ==============================================
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página carregada - verificando login...');
+            
             // Verificar se já está logado
-            checkIfLoggedIn();
+            const loggedInUserCPF = localStorage.getItem('picpay_logged_in_user');
             
-            // Inicializar eventos
-            initLoginEvents();
-        });
-        
-        // ==============================================
-        // FUNÇÕES DE LOGIN
-        // ==============================================
-        function checkIfLoggedIn() {
-            const loggedInUser = localStorage.getItem('picpay_logged_in_user');
-            
-            if (loggedInUser) {
-                // Tentar encontrar o usuário nas credenciais
-                currentUser = validCredentials.find(cred => cred.cpf === loggedInUser);
+            if (loggedInUserCPF) {
+                console.log('Usuário encontrado no localStorage:', loggedInUserCPF);
+                
+                // Encontrar o usuário nas credenciais
+                currentUser = validCredentials.find(cred => cred.cpf === loggedInUserCPF);
                 
                 if (currentUser) {
+                    console.log('Usuário autenticado:', currentUser.cpfFormatted);
+                    
                     // Carregar dados do usuário
                     loadUserData();
                     
@@ -1414,13 +1410,15 @@
                     
                     // Inicializar eventos do app
                     initAppEvents();
-                    
-                    console.log('Usuário já logado:', currentUser.cpfFormatted);
-                    return true;
+                    return;
+                } else {
+                    console.log('Usuário não encontrado nas credenciais, limpando localStorage...');
+                    localStorage.removeItem('picpay_logged_in_user');
                 }
             }
             
             // Se não estiver logado, mostrar splash screen
+            console.log('Nenhum usuário logado, mostrando tela de login...');
             setTimeout(() => {
                 splashScreen.classList.add('hidden');
                 
@@ -1429,9 +1427,13 @@
                 }, 500);
             }, 2000);
             
-            return false;
-        }
+            // Inicializar eventos de login
+            initLoginEvents();
+        });
         
+        // ==============================================
+        // FUNÇÕES DE LOGIN
+        // ==============================================
         function initLoginEvents() {
             // Alternar visibilidade da senha
             togglePasswordBtn.addEventListener('click', function() {
@@ -1488,14 +1490,13 @@
                 
                 if (user) {
                     currentUser = user;
+                    console.log('Login bem-sucedido para:', user.cpfFormatted);
                     
                     // Salvar estado de login
                     if (rememberMeCheckbox.checked) {
                         localStorage.setItem('picpay_logged_in_user', user.cpf);
+                        console.log('Estado de login salvo no localStorage');
                     }
-                    
-                    // Salvar dados padrão do usuário se for a primeira vez
-                    saveUserDataToStorage(true);
                     
                     // Login bem-sucedido
                     loginSuccess();
@@ -1551,66 +1552,73 @@
         // ==============================================
         // FUNÇÕES DE DADOS DO USUÁRIO
         // ==============================================
-        function saveUserDataToStorage(isFirstTime = false) {
-            if (!currentUser) return;
-            
-            const userKey = `picpay_user_${currentUser.cpf}`;
-            let userData;
-            
-            if (isFirstTime) {
-                // Dados iniciais
-                userData = {
-                    cpf: currentUser.cpf,
-                    name: currentUser.defaultName,
-                    account: 'Conta • Empresas',
-                    balance: currentUser.defaultBalance,
-                    photo: currentUser.defaultPhoto,
-                    lastUpdate: new Date().toISOString()
-                };
-            } else {
-                // Dados atuais da tela
-                userData = {
-                    cpf: currentUser.cpf,
-                    name: userNameElement.textContent,
-                    account: userAccountElement.textContent,
-                    balance: balanceElement.textContent,
-                    photo: profilePicElement.src,
-                    lastUpdate: new Date().toISOString()
-                };
+        function loadUserData() {
+            if (!currentUser) {
+                console.error('Nenhum usuário atual para carregar dados');
+                return;
             }
             
-            // Salvar no localStorage
-            localStorage.setItem(userKey, JSON.stringify(userData));
-        }
-        
-        function loadUserData() {
-            if (!currentUser) return;
-            
             const userKey = `picpay_user_${currentUser.cpf}`;
+            console.log('Carregando dados para usuário:', userKey);
+            
+            // Verificar se existem dados salvos
             const savedData = localStorage.getItem(userKey);
             
             if (savedData) {
-                const userData = JSON.parse(savedData);
-                
-                // Aplicar dados salvos
-                userNameElement.textContent = userData.name || currentUser.defaultName;
-                userAccountElement.textContent = userData.account || 'Conta • Empresas';
-                balanceElement.textContent = userData.balance || currentUser.defaultBalance;
-                profilePicElement.src = userData.photo || currentUser.defaultPhoto;
+                try {
+                    const userData = JSON.parse(savedData);
+                    console.log('Dados encontrados no localStorage:', userData);
+                    
+                    // Aplicar dados salvos na interface
+                    if (userData.name) {
+                        userNameElement.textContent = userData.name;
+                        console.log('Nome carregado:', userData.name);
+                    }
+                    
+                    if (userData.account) {
+                        userAccountElement.textContent = userData.account;
+                        console.log('Conta carregada:', userData.account);
+                    }
+                    
+                    if (userData.balance) {
+                        balanceElement.textContent = userData.balance;
+                        console.log('Saldo carregado:', userData.balance);
+                    }
+                    
+                    if (userData.photo) {
+                        profilePicElement.src = userData.photo;
+                        console.log('Foto carregada:', userData.photo);
+                    }
+                    
+                } catch (error) {
+                    console.error('Erro ao parsear dados do localStorage:', error);
+                    loadDefaultData();
+                }
             } else {
-                // Usar dados padrão
-                userNameElement.textContent = currentUser.defaultName;
-                userAccountElement.textContent = 'Conta • Empresas';
-                balanceElement.textContent = currentUser.defaultBalance;
-                profilePicElement.src = currentUser.defaultPhoto;
-                
-                // Salvar dados padrão
-                saveUserDataToStorage(true);
+                console.log('Nenhum dado salvo encontrado, carregando dados padrão');
+                loadDefaultData();
             }
         }
         
-        function updateUserData() {
+        function loadDefaultData() {
             if (!currentUser) return;
+            
+            userNameElement.textContent = currentUser.defaultName;
+            userAccountElement.textContent = 'Conta • Empresas';
+            balanceElement.textContent = currentUser.defaultBalance;
+            profilePicElement.src = currentUser.defaultPhoto;
+            
+            console.log('Dados padrão carregados para:', currentUser.cpfFormatted);
+            
+            // Salvar dados padrão no localStorage
+            saveUserData();
+        }
+        
+        function saveUserData() {
+            if (!currentUser) {
+                console.error('Nenhum usuário atual para salvar dados');
+                return;
+            }
             
             const userKey = `picpay_user_${currentUser.cpf}`;
             
@@ -1624,7 +1632,7 @@
             };
             
             localStorage.setItem(userKey, JSON.stringify(userData));
-            console.log('Dados atualizados:', userData);
+            console.log('Dados salvos no localStorage para:', userKey, userData);
         }
         
         // ==============================================
@@ -1638,6 +1646,8 @@
         }
         
         function initAppEvents() {
+            console.log('Inicializando eventos do app...');
+            
             // Botões de edição
             const editNameBtn = document.getElementById('edit-name-btn');
             const editBalanceBtn = document.getElementById('edit-balance-btn');
@@ -1713,7 +1723,7 @@
                 if (newName) {
                     userNameElement.textContent = newName;
                     userAccountElement.textContent = newAccount;
-                    updateUserData(); // Salvar alterações
+                    saveUserData(); // Salvar alterações
                     closeAllModals();
                     alert('Nome atualizado com sucesso!');
                 }
@@ -1726,7 +1736,7 @@
                     const formattedBalance = newBalance.replace(/[^\d,]/g, '');
                     if (formattedBalance) {
                         balanceElement.textContent = formattedBalance;
-                        updateUserData(); // Salvar alterações
+                        saveUserData(); // Salvar alterações
                         closeAllModals();
                         alert('Saldo atualizado com sucesso!');
                     }
@@ -1742,7 +1752,7 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         profilePicElement.src = e.target.result;
-                        updateUserData(); // Salvar alterações
+                        saveUserData(); // Salvar alterações
                         closeAllModals();
                         alert('Foto atualizada com sucesso!');
                     };
@@ -1751,7 +1761,7 @@
                     const img = new Image();
                     img.onload = function() {
                         profilePicElement.src = newPhotoUrl;
-                        updateUserData(); // Salvar alterações
+                        saveUserData(); // Salvar alterações
                         closeAllModals();
                         alert('Foto atualizada com sucesso!');
                     };
@@ -1794,6 +1804,8 @@
                     card.style.transform = '';
                 });
             });
+            
+            console.log('Eventos do app inicializados com sucesso');
         }
         
         // ==============================================
@@ -1807,9 +1819,27 @@
         
         // Função de logout global
         window.logoutPicPay = function() {
+            if (currentUser) {
+                console.log('Fazendo logout do usuário:', currentUser.cpfFormatted);
+            }
             localStorage.removeItem('picpay_logged_in_user');
             alert('Logout realizado! A página será recarregada.');
             location.reload();
+        };
+        
+        // Função para ver dados salvos
+        window.verDadosSalvos = function() {
+            if (currentUser) {
+                const userKey = `picpay_user_${currentUser.cpf}`;
+                const savedData = localStorage.getItem(userKey);
+                if (savedData) {
+                    console.log('Dados salvos para', currentUser.cpfFormatted, ':', JSON.parse(savedData));
+                } else {
+                    console.log('Nenhum dado salvo encontrado para', currentUser.cpfFormatted);
+                }
+            } else {
+                console.log('Nenhum usuário logado no momento');
+            }
         };
     </script>
 </body>
