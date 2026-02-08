@@ -49,6 +49,8 @@
             padding: 40px 35px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
             animation: slideUp 0.5s ease;
+            position: relative;
+            z-index: 1;
         }
 
         /* Header */
@@ -442,6 +444,122 @@
             text-decoration: underline;
         }
 
+        /* NOTIFICAÇÃO DE CÓDIGO */
+        .code-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 350px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            overflow: hidden;
+            display: none;
+            animation: notificationSlide 0.5s ease;
+            border-left: 5px solid var(--picpay-green);
+        }
+
+        @keyframes notificationSlide {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-header {
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .notification-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-notification {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-notification:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .notification-body {
+            padding: 20px;
+        }
+
+        .notification-icon {
+            text-align: center;
+            font-size: 3rem;
+            color: var(--picpay-green);
+            margin-bottom: 15px;
+        }
+
+        .notification-message {
+            text-align: center;
+            margin-bottom: 10px;
+            color: var(--picpay-black);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .code-display {
+            background: linear-gradient(135deg, #f0f9ff, #e0f7fa);
+            border: 2px dashed var(--picpay-green);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .code-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--picpay-green);
+            letter-spacing: 5px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            color: var(--picpay-gray);
+        }
+
+        .notification-footer {
+            padding: 15px 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: var(--picpay-gray);
+        }
+
         /* Animations */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(30px); }
@@ -491,10 +609,57 @@
             .step-label {
                 font-size: 0.7rem;
             }
+            
+            .code-notification {
+                width: 90%;
+                right: 5%;
+                left: 5%;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Notificação de Código -->
+    <div class="code-notification" id="code-notification">
+        <div class="notification-header">
+            <div class="notification-title">
+                <i class="fas fa-shield-alt"></i>
+                Código de Verificação
+            </div>
+            <button class="close-notification" id="close-notification">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="notification-body">
+            <div class="notification-icon">
+                <i class="fas fa-key"></i>
+            </div>
+            
+            <p class="notification-message">
+                Seu código de verificação foi gerado com sucesso!
+            </p>
+            
+            <div class="code-display">
+                <div class="code-number" id="notification-code">000000</div>
+                <div class="code-info">
+                    <span>Validade: 10 min</span>
+                    <span id="code-user">Usuário: -</span>
+                </div>
+            </div>
+            
+            <p class="notification-message" style="font-size: 0.9rem;">
+                Use este código no formulário para continuar o processo de recuperação de senha.
+            </p>
+        </div>
+        
+        <div class="notification-footer">
+            <i class="fas fa-info-circle"></i>
+            Código válido por 10 minutos
+        </div>
+    </div>
+
+    <!-- Container Principal -->
     <div class="forgot-container">
         <!-- Header -->
         <div class="forgot-header">
@@ -683,7 +848,6 @@
                 email: 'admin@picpay.com',
                 phone: '(11) 91234-5678'
             }
-            // ADICIONE MAIS USUÁRIOS AQUI (OS MESMOS DO LOGIN)
         ];
 
         // Elementos DOM
@@ -696,6 +860,12 @@
         const successText = document.getElementById('success-text');
         const infoMessage = document.getElementById('info-message');
         const infoText = document.getElementById('info-text');
+        
+        // Elementos da notificação
+        const codeNotification = document.getElementById('code-notification');
+        const notificationCode = document.getElementById('notification-code');
+        const codeUser = document.getElementById('code-user');
+        const closeNotification = document.getElementById('close-notification');
         
         // Form Elements
         const cpfInput = document.getElementById('cpf');
@@ -723,6 +893,7 @@
         let verificationCode = '';
         let canResendCode = true;
         let countdownInterval = null;
+        let notificationTimeout = null;
 
         // Inicialização
         function init() {
@@ -741,6 +912,9 @@
             resendCodeBtn.addEventListener('click', resendVerificationCode);
             backStep3Btn.addEventListener('click', previousStep);
             resetPasswordBtn.addEventListener('click', resetPassword);
+            
+            // Notificação
+            closeNotification.addEventListener('click', hideNotification);
             
             // Alternar visibilidade da senha
             togglePasswordBtn.addEventListener('click', togglePasswordVisibility);
@@ -849,7 +1023,7 @@
         function validateCPF() {
             const cpf = cpfInput.value.replace(/\D/g, '');
             
-            console.log('Validando CPF:', cpf); // DEBUG
+            console.log('Validando CPF:', cpf);
             
             // Validar formato
             if (cpf.length !== 11) {
@@ -877,15 +1051,43 @@
 
         // Gerar código de verificação
         function generateVerificationCode() {
-            // Gerar código de 6 dígitos
+            // Gerar NOVO código de 6 dígitos sempre diferente
             verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-            console.log(`Código de verificação para ${currentUser.name}: ${verificationCode}`);
             
-            // Mostrar mensagem informativa
-            showInfo(`Enviamos um código de verificação de 6 dígitos para o e-mail/celular cadastrado no CPF ${currentUser.cpfFormatted}. Para testes, use o código: ${verificationCode}`);
+            console.log(`Novo código de verificação para ${currentUser.name}: ${verificationCode}`);
+            
+            // Mostrar notificação com o código
+            showCodeNotification(verificationCode, currentUser);
             
             // Iniciar contador para reenvio
             startResendCountdown();
+        }
+
+        // Mostrar notificação com o código
+        function showCodeNotification(code, user) {
+            // Atualizar conteúdo da notificação
+            notificationCode.textContent = code;
+            codeUser.textContent = `Usuário: ${user.name}`;
+            
+            // Mostrar notificação
+            codeNotification.style.display = 'block';
+            
+            // Fechar notificação automaticamente após 30 segundos
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
+            
+            notificationTimeout = setTimeout(() => {
+                hideNotification();
+            }, 30000); // 30 segundos
+        }
+
+        // Esconder notificação
+        function hideNotification() {
+            codeNotification.style.display = 'none';
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
         }
 
         // Iniciar contador para reenvio
@@ -916,7 +1118,7 @@
             if (!canResendCode) return;
             
             generateVerificationCode();
-            showSuccess('Novo código enviado com sucesso!');
+            showSuccess('Novo código gerado e enviado!');
             
             // Limpar inputs
             codeInputs.forEach(input => {
@@ -953,6 +1155,7 @@
             
             // Código válido
             clearInterval(countdownInterval);
+            hideNotification(); // Esconder notificação após código validado
             nextStep();
         }
 
@@ -1084,17 +1287,14 @@
             }
         }
 
-        // Navegação entre passos - FUNÇÃO CORRIGIDA
+        // Navegação entre passos
         function nextStep() {
-            console.log('nextStep chamado, currentStep:', currentStep); // DEBUG
+            console.log('nextStep chamado, currentStep:', currentStep);
             
             if (currentStep >= 3) return;
             
-            // Atualizar estado atual - CORREÇÃO AQUI
-            // Remover 'active' do passo atual
+            // Atualizar estado atual
             document.getElementById(`step-${currentStep}`).classList.remove('active');
-            
-            // Adicionar 'completed' ao passo atual
             document.getElementById(`step-${currentStep}`).classList.add('completed');
             
             // Incrementar passo
@@ -1105,22 +1305,22 @@
             
             updateProgressBar();
             
-            // Mostrar formulário correspondente - CORREÇÃO AQUI
+            // Mostrar formulário correspondente
             formSteps.forEach(step => step.classList.remove('active'));
             document.getElementById(`step${currentStep}-form`).classList.add('active');
             
             // Limpar mensagens
             hideMessages();
             
-            console.log('Novo currentStep:', currentStep); // DEBUG
+            console.log('Novo currentStep:', currentStep);
         }
 
         function previousStep() {
-            console.log('previousStep chamado, currentStep:', currentStep); // DEBUG
+            console.log('previousStep chamado, currentStep:', currentStep);
             
             if (currentStep <= 1) return;
             
-            // Remover 'active' do passo atual - CORREÇÃO AQUI
+            // Remover 'active' do passo atual
             document.getElementById(`step-${currentStep}`).classList.remove('active');
             
             // Remover 'completed' do passo anterior
@@ -1134,22 +1334,20 @@
             
             updateProgressBar();
             
-            // Mostrar formulário correspondente - CORREÇÃO AQUI
+            // Mostrar formulário correspondente
             formSteps.forEach(step => step.classList.remove('active'));
             document.getElementById(`step${currentStep}-form`).classList.add('active');
             
             hideMessages();
             
-            console.log('Novo currentStep:', currentStep); // DEBUG
+            console.log('Novo currentStep:', currentStep);
         }
 
-        // Atualizar barra de progresso - FUNÇÃO CORRIGIDA
+        // Atualizar barra de progresso
         function updateProgressBar() {
-            // Calcular a porcentagem baseada no passo atual
-            // Passo 1: 0%, Passo 2: 50%, Passo 3: 100%
             const widthPercentage = ((currentStep - 1) / 2) * 100;
             progressBar.style.width = `${widthPercentage}%`;
-            console.log('Progress bar atualizada para:', widthPercentage + '%'); // DEBUG
+            console.log('Progress bar atualizada para:', widthPercentage + '%');
         }
 
         // Mostrar/esconder mensagens
