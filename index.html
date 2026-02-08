@@ -8,9 +8,9 @@
     <style>
         /* Cores atualizadas do PicPay - mais escuras */
         :root {
-            --picpay-green: #1abc9c; /* Verde mais escuro do PicPay */
-            --picpay-dark-green: #16a085; /* Tom mais escuro */
-            --picpay-darker-green: #0d8b71; /* Para hover */
+            --picpay-green: #1abc9c;
+            --picpay-dark-green: #16a085;
+            --picpay-darker-green: #0d8b71;
             --picpay-black: #1a1a1a;
             --picpay-gray: #3a3a3a;
             --picpay-light-gray: #f5f5f5;
@@ -1043,7 +1043,7 @@
                 
                 <div class="remember-forgot">
                     <label class="remember-me">
-                        <input type="checkbox" id="remember-me">
+                        <input type="checkbox" id="remember-me" checked>
                         <span>Lembrar-me</span>
                     </label>
                     <a href="esquecer-senha.html" class="forgot-password">Esqueci minha senha</a>
@@ -1338,14 +1338,12 @@
         // CPF e senhas que funcionam:
         // 1. CPF: 490.589.118-37 / Senha: 1814Enzo
         // 2. CPF: 111.222.333-44 / Senha: adm
-        // 3. CPF: (VOCÊ PODE ADICIONAR AQUI DEPOIS) / Senha: (VOCÊ PODE ADICIONAR AQUI DEPOIS)
-        // 4. CPF: (VOCÊ PODE ADICIONAR AQUI DEPOIS) / Senha: (VOCÊ PODE ADICIONAR AQUI DEPOIS)
         // ==============================================
         
         const validCredentials = [
             {
-                cpf: '49058911837', // CPF sem formatação
-                cpfFormatted: '490.589.118-37', // CPF formatado
+                cpf: '49058911837',
+                cpfFormatted: '490.589.118-37',
                 password: '1814Enzo',
                 defaultName: 'Enzo Silva',
                 defaultPhoto: 'https://randomuser.me/api/portraits/men/32.jpg',
@@ -1358,25 +1356,7 @@
                 defaultName: 'Administrador',
                 defaultPhoto: 'https://randomuser.me/api/portraits/men/1.jpg',
                 defaultBalance: '5.000,00'
-            },
-            // ADICIONE O TERCEIRO USUÁRIO AQUI:
-            // {
-            //     cpf: 'SEU_CPF_AQUI_SEM_PONTOS',
-            //     cpfFormatted: 'SEU.CPF.FORMATADO.AQUI',
-            //     password: 'SUA_SENHA_AQUI',
-            //     defaultName: 'NOME_DO_USUARIO',
-            //     defaultPhoto: 'URL_DA_FOTO',
-            //     defaultBalance: 'SALDO_INICIAL'
-            // },
-            // ADICIONE O QUARTO USUÁRIO AQUI:
-            // {
-            //     cpf: 'SEU_CPF_AQUI_SEM_PONTOS',
-            //     cpfFormatted: 'SEU.CPF.FORMATADO.AQUI',
-            //     password: 'SUA_SENHA_AQUI',
-            //     defaultName: 'NOME_DO_USUARIO',
-            //     defaultPhoto: 'URL_DA_FOTO',
-            //     defaultBalance: 'SALDO_INICIAL'
-            // }
+            }
         ];
         
         // Elementos da splash screen e login
@@ -1391,25 +1371,62 @@
         const togglePasswordBtn = document.getElementById('toggle-password');
         const loginError = document.getElementById('login-error');
         const errorMessage = document.getElementById('error-message');
+        const rememberMeCheckbox = document.getElementById('remember-me');
         
         // Variável para armazenar o usuário atual
         let currentUser = null;
         
-        // Mostrar splash screen por 2 segundos, depois mostrar tela de login
-        setTimeout(() => {
-            splashScreen.classList.add('hidden');
+        // VERIFICAR SE JÁ ESTÁ LOGADO AO CARREGAR A PÁGINA
+        document.addEventListener('DOMContentLoaded', function() {
+            const loggedInUser = localStorage.getItem('picpay_logged_in_user');
+            const userData = localStorage.getItem('picpay_user_data');
             
+            if (loggedInUser && userData) {
+                // Se já estiver logado, pular splash e login
+                splashScreen.style.display = 'none';
+                loginScreen.style.display = 'none';
+                
+                // Carregar dados do usuário
+                const parsedUserData = JSON.parse(userData);
+                const userCpf = parsedUserData.cpf || loggedInUser;
+                
+                // Encontrar o usuário nas credenciais
+                currentUser = validCredentials.find(cred => cred.cpf === userCpf);
+                
+                if (currentUser) {
+                    // Carregar dados do localStorage
+                    loadUserData();
+                    
+                    // Mostrar conteúdo principal
+                    mainContent.classList.add('visible');
+                    
+                    // Atualizar horário
+                    updateTime();
+                    setInterval(updateTime, 60000);
+                    
+                    // Inicializar eventos
+                    initAppEvents();
+                    
+                    console.log('Usuário já logado:', currentUser.cpfFormatted);
+                    return;
+                }
+            }
+            
+            // Se não estiver logado, mostrar fluxo normal
             setTimeout(() => {
-                loginScreen.classList.remove('hidden');
-            }, 500);
-        }, 2000);
+                splashScreen.classList.add('hidden');
+                
+                setTimeout(() => {
+                    loginScreen.classList.remove('hidden');
+                }, 500);
+            }, 2000);
+        });
         
         // Alternar visibilidade da senha
         togglePasswordBtn.addEventListener('click', function() {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
             
-            // Alternar ícone
             const icon = this.querySelector('i');
             if (type === 'text') {
                 icon.classList.remove('fa-eye');
@@ -1441,10 +1458,9 @@
         loginForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const cpf = cpfInput.value.replace(/\D/g, ''); // Remove formatação
+            const cpf = cpfInput.value.replace(/\D/g, '');
             const password = passwordInput.value.trim();
             
-            // Validação simples
             if (!cpf || cpf.length !== 11) {
                 showError('Por favor, insira um CPF válido (11 dígitos)');
                 return;
@@ -1455,17 +1471,26 @@
                 return;
             }
             
-            // Verificar credenciais
             const user = validCredentials.find(cred => 
                 cred.cpf === cpf && cred.password === password
             );
             
             if (user) {
-                // Login bem-sucedido
                 currentUser = user;
+                
+                // Salvar estado de login se "Lembrar-me" estiver marcado
+                if (rememberMeCheckbox.checked) {
+                    localStorage.setItem('picpay_logged_in_user', user.cpf);
+                    
+                    // Salvar dados padrão do usuário se for a primeira vez
+                    const userKey = `picpay_user_${user.cpf}`;
+                    if (!localStorage.getItem(userKey)) {
+                        saveDefaultUserData(user);
+                    }
+                }
+                
                 loginSuccess();
             } else {
-                // Login falhou
                 showError('CPF ou senha incorretos');
             }
         });
@@ -1474,15 +1499,16 @@
             errorMessage.textContent = message;
             loginError.style.display = 'flex';
             
-            // Esconder erro após 5 segundos
             setTimeout(() => {
                 loginError.style.display = 'none';
             }, 5000);
         }
         
         function loginSuccess() {
-            // Esconder tela de login
             loginScreen.classList.add('hidden');
+            
+            // Salvar dados padrão se for primeiro login
+            saveDefaultUserData(currentUser);
             
             // Carregar dados do usuário
             loadUserData();
@@ -1490,6 +1516,9 @@
             // Mostrar conteúdo principal
             setTimeout(() => {
                 mainContent.classList.add('visible');
+                
+                // Inicializar eventos do app
+                initAppEvents();
             }, 500);
         }
         
@@ -1515,29 +1544,42 @@
             currentTimeElement.textContent = `${hours}:${minutes}`;
         }
         
-        // Atualizar a cada minuto
-        updateTime();
-        setInterval(updateTime, 60000);
+        // Salvar dados padrão do usuário
+        function saveDefaultUserData(user) {
+            if (!user) return;
+            
+            const userKey = `picpay_user_${user.cpf}`;
+            
+            const defaultData = {
+                cpf: user.cpf,
+                name: user.defaultName,
+                account: 'Conta • Empresas',
+                balance: user.defaultBalance,
+                photo: user.defaultPhoto,
+                lastUpdate: new Date().toISOString()
+            };
+            
+            localStorage.setItem(userKey, JSON.stringify(defaultData));
+            localStorage.setItem('picpay_user_data', JSON.stringify(defaultData));
+        }
         
         // Carregar dados do usuário do LocalStorage
         function loadUserData() {
             if (!currentUser) return;
             
-            // Chave única para cada usuário baseada no CPF
             const userKey = `picpay_user_${currentUser.cpf}`;
-            
-            // Tentar carregar dados salvos
             const savedData = localStorage.getItem(userKey);
             
             if (savedData) {
-                // Se houver dados salvos, usar eles
                 const userData = JSON.parse(savedData);
                 userNameElement.textContent = userData.name || currentUser.defaultName;
                 userAccountElement.textContent = userData.account || 'Conta • Empresas';
                 balanceElement.textContent = userData.balance || currentUser.defaultBalance;
                 profilePicElement.src = userData.photo || currentUser.defaultPhoto;
+                
+                // Atualizar dados gerais também
+                localStorage.setItem('picpay_user_data', savedData);
             } else {
-                // Se não houver dados salvos, usar defaults
                 userNameElement.textContent = currentUser.defaultName;
                 userAccountElement.textContent = 'Conta • Empresas';
                 balanceElement.textContent = currentUser.defaultBalance;
@@ -1552,6 +1594,7 @@
             const userKey = `picpay_user_${currentUser.cpf}`;
             
             const userData = {
+                cpf: currentUser.cpf,
                 name: userNameElement.textContent,
                 account: userAccountElement.textContent,
                 balance: balanceElement.textContent,
@@ -1560,159 +1603,160 @@
             };
             
             localStorage.setItem(userKey, JSON.stringify(userData));
+            localStorage.setItem('picpay_user_data', JSON.stringify(userData));
         }
         
-        // Botões de edição
-        const editNameBtn = document.getElementById('edit-name-btn');
-        const editBalanceBtn = document.getElementById('edit-balance-btn');
-        
-        // Modais
-        const nameModal = document.getElementById('name-modal');
-        const balanceModal = document.getElementById('balance-modal');
-        const photoModal = document.getElementById('photo-modal');
-        
-        // Botões para fechar modais
-        const closeNameModal = document.getElementById('close-name-modal');
-        const closeBalanceModal = document.getElementById('close-balance-modal');
-        const closePhotoModal = document.getElementById('close-photo-modal');
-        
-        // Botões de cancelar
-        const cancelNameBtn = document.getElementById('cancel-name');
-        const cancelBalanceBtn = document.getElementById('cancel-balance');
-        const cancelPhotoBtn = document.getElementById('cancel-photo');
-        
-        // Botões de salvar
-        const saveNameBtn = document.getElementById('save-name');
-        const saveBalanceBtn = document.getElementById('save-balance');
-        const savePhotoBtn = document.getElementById('save-photo');
-        
-        // Inputs dos formulários
-        const newNameInput = document.getElementById('new-name');
-        const userAccountInput = document.getElementById('user-account-input');
-        const newBalanceInput = document.getElementById('new-balance');
-        const photoUrlInput = document.getElementById('photo-url');
-        const photoUploadInput = document.getElementById('photo-upload');
+        // Inicializar eventos do app
+        function initAppEvents() {
+            // Botões de edição
+            const editNameBtn = document.getElementById('edit-name-btn');
+            const editBalanceBtn = document.getElementById('edit-balance-btn');
+            
+            // Modais
+            const nameModal = document.getElementById('name-modal');
+            const balanceModal = document.getElementById('balance-modal');
+            const photoModal = document.getElementById('photo-modal');
+            
+            // Botões para fechar modais
+            const closeNameModal = document.getElementById('close-name-modal');
+            const closeBalanceModal = document.getElementById('close-balance-modal');
+            const closePhotoModal = document.getElementById('close-photo-modal');
+            
+            // Botões de cancelar
+            const cancelNameBtn = document.getElementById('cancel-name');
+            const cancelBalanceBtn = document.getElementById('cancel-balance');
+            const cancelPhotoBtn = document.getElementById('cancel-photo');
+            
+            // Botões de salvar
+            const saveNameBtn = document.getElementById('save-name');
+            const saveBalanceBtn = document.getElementById('save-balance');
+            const savePhotoBtn = document.getElementById('save-photo');
+            
+            // Inputs dos formulários
+            const newNameInput = document.getElementById('new-name');
+            const userAccountInput = document.getElementById('user-account-input');
+            const newBalanceInput = document.getElementById('new-balance');
+            const photoUrlInput = document.getElementById('photo-url');
+            const photoUploadInput = document.getElementById('photo-upload');
 
-        // Abrir modais
-        editNameBtn.addEventListener('click', () => {
-            newNameInput.value = userNameElement.textContent;
-            userAccountInput.value = userAccountElement.textContent;
-            nameModal.style.display = 'flex';
-        });
+            // Abrir modais
+            editNameBtn.addEventListener('click', () => {
+                newNameInput.value = userNameElement.textContent;
+                userAccountInput.value = userAccountElement.textContent;
+                nameModal.style.display = 'flex';
+            });
 
-        editBalanceBtn.addEventListener('click', () => {
-            newBalanceInput.value = balanceElement.textContent;
-            balanceModal.style.display = 'flex';
-        });
+            editBalanceBtn.addEventListener('click', () => {
+                newBalanceInput.value = balanceElement.textContent;
+                balanceModal.style.display = 'flex';
+            });
 
-        profilePicElement.addEventListener('click', () => {
-            photoUrlInput.value = profilePicElement.src;
-            photoModal.style.display = 'flex';
-        });
+            profilePicElement.addEventListener('click', () => {
+                photoUrlInput.value = profilePicElement.src;
+                photoModal.style.display = 'flex';
+            });
 
-        // Fechar modais
-        function closeAllModals() {
-            nameModal.style.display = 'none';
-            balanceModal.style.display = 'none';
-            photoModal.style.display = 'none';
-            photoUploadInput.value = '';
+            // Fechar modais
+            function closeAllModals() {
+                nameModal.style.display = 'none';
+                balanceModal.style.display = 'none';
+                photoModal.style.display = 'none';
+                photoUploadInput.value = '';
+            }
+
+            closeNameModal.addEventListener('click', closeAllModals);
+            closeBalanceModal.addEventListener('click', closeAllModals);
+            closePhotoModal.addEventListener('click', closeAllModals);
+            
+            cancelNameBtn.addEventListener('click', closeAllModals);
+            cancelBalanceBtn.addEventListener('click', closeAllModals);
+            cancelPhotoBtn.addEventListener('click', closeAllModals);
+
+            // Salvar alterações
+            saveNameBtn.addEventListener('click', () => {
+                const newName = newNameInput.value.trim();
+                const newAccount = userAccountInput.value;
+                
+                if (newName) {
+                    userNameElement.textContent = newName;
+                    userAccountElement.textContent = newAccount;
+                    saveUserData();
+                    closeAllModals();
+                }
+            });
+
+            saveBalanceBtn.addEventListener('click', () => {
+                const newBalance = newBalanceInput.value.trim();
+                if (newBalance) {
+                    const formattedBalance = newBalance.replace(/[^\d,]/g, '');
+                    if (formattedBalance) {
+                        balanceElement.textContent = formattedBalance;
+                        saveUserData();
+                        closeAllModals();
+                    }
+                }
+            });
+
+            savePhotoBtn.addEventListener('click', () => {
+                const newPhotoUrl = photoUrlInput.value.trim();
+                const file = photoUploadInput.files[0];
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        profilePicElement.src = e.target.result;
+                        saveUserData();
+                        closeAllModals();
+                    };
+                    reader.readAsDataURL(file);
+                } else if (newPhotoUrl) {
+                    const img = new Image();
+                    img.onload = function() {
+                        profilePicElement.src = newPhotoUrl;
+                        saveUserData();
+                        closeAllModals();
+                    };
+                    img.onerror = function() {
+                        alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
+                    };
+                    img.src = newPhotoUrl;
+                }
+            });
+
+            // Fechar modal ao clicar fora
+            window.addEventListener('click', (event) => {
+                if (event.target === nameModal || event.target === balanceModal || event.target === photoModal) {
+                    closeAllModals();
+                }
+            });
+
+            // Simular funcionalidade dos botões
+            document.querySelectorAll('.service-card, .feature-card, .nav-item, .card-action-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    if (button.getAttribute('href') === '#' || button.tagName === 'BUTTON') {
+                        e.preventDefault();
+                        const buttonText = button.textContent.trim() || button.querySelector('span')?.textContent || 'este botão';
+                        alert(`Funcionalidade do PicPay em desenvolvimento!\nAção: ${buttonText}`);
+                    }
+                });
+            });
+
+            // Efeitos visuais
+            document.querySelectorAll('.service-card, .feature-card').forEach(card => {
+                card.addEventListener('mousedown', () => {
+                    card.style.transform = 'scale(0.97)';
+                });
+                
+                card.addEventListener('mouseup', () => {
+                    card.style.transform = '';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
         }
-
-        closeNameModal.addEventListener('click', closeAllModals);
-        closeBalanceModal.addEventListener('click', closeAllModals);
-        closePhotoModal.addEventListener('click', closeAllModals);
         
-        cancelNameBtn.addEventListener('click', closeAllModals);
-        cancelBalanceBtn.addEventListener('click', closeAllModals);
-        cancelPhotoBtn.addEventListener('click', closeAllModals);
-
-        // Salvar alterações
-        saveNameBtn.addEventListener('click', () => {
-            const newName = newNameInput.value.trim();
-            const newAccount = userAccountInput.value;
-            
-            if (newName) {
-                userNameElement.textContent = newName;
-                userAccountElement.textContent = newAccount;
-                saveUserData(); // Salvar para o usuário atual
-                closeAllModals();
-            }
-        });
-
-        saveBalanceBtn.addEventListener('click', () => {
-            const newBalance = newBalanceInput.value.trim();
-            if (newBalance) {
-                // Formatar o saldo
-                const formattedBalance = newBalance.replace(/[^\d,]/g, '');
-                if (formattedBalance) {
-                    balanceElement.textContent = formattedBalance;
-                    saveUserData(); // Salvar para o usuário atual
-                    closeAllModals();
-                }
-            }
-        });
-
-        savePhotoBtn.addEventListener('click', () => {
-            const newPhotoUrl = photoUrlInput.value.trim();
-            const file = photoUploadInput.files[0];
-            
-            if (file) {
-                // Upload de arquivo local
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    profilePicElement.src = e.target.result;
-                    saveUserData(); // Salvar para o usuário atual
-                    closeAllModals();
-                };
-                reader.readAsDataURL(file);
-            } else if (newPhotoUrl) {
-                // URL de imagem
-                const img = new Image();
-                img.onload = function() {
-                    profilePicElement.src = newPhotoUrl;
-                    saveUserData(); // Salvar para o usuário atual
-                    closeAllModals();
-                };
-                img.onerror = function() {
-                    alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
-                };
-                img.src = newPhotoUrl;
-            }
-        });
-
-        // Fechar modal ao clicar fora
-        window.addEventListener('click', (event) => {
-            if (event.target === nameModal || event.target === balanceModal || event.target === photoModal) {
-                closeAllModals();
-            }
-        });
-
-        // Simular funcionalidade dos botões
-        document.querySelectorAll('.service-card, .feature-card, .nav-item, .card-action-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                if (button.getAttribute('href') === '#' || button.tagName === 'BUTTON') {
-                    e.preventDefault();
-                    const buttonText = button.textContent.trim() || button.querySelector('span')?.textContent || 'este botão';
-                    alert(`Funcionalidade do PicPay em desenvolvimento!\nAção: ${buttonText}`);
-                }
-            });
-        });
-
-        // Efeitos visuais
-        document.querySelectorAll('.service-card, .feature-card').forEach(card => {
-            card.addEventListener('mousedown', () => {
-                card.style.transform = 'scale(0.97)';
-            });
-            
-            card.addEventListener('mouseup', () => {
-                card.style.transform = '';
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = '';
-            });
-        });
-
         // Pular splash screen se o usuário clicar nela
         splashScreen.addEventListener('click', () => {
             splashScreen.classList.add('hidden');
@@ -1721,11 +1765,19 @@
             }, 500);
         });
         
-        // Test credentials display (para fins de demonstração)
+        // Botão de logout (opcional - você pode adicionar um botão de logout)
+        // Para fazer logout manualmente, abra o console do navegador e digite:
+        // localStorage.removeItem('picpay_logged_in_user');
+        // localStorage.removeItem('picpay_user_data');
+        // location.reload();
+        
         console.log('Credenciais válidas para teste:');
         console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo');
         console.log('2. CPF: 111.222.333-44 / Senha: adm');
-        console.log('3. e 4. Você pode adicionar no código (linhas 1872-1890)');
+        console.log('\nPara fazer logout manualmente, abra o console e digite:');
+        console.log('localStorage.removeItem("picpay_logged_in_user");');
+        console.log('localStorage.removeItem("picpay_user_data");');
+        console.log('location.reload();');
     </script>
 </body>
 </html>
