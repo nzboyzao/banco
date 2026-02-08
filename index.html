@@ -30,12 +30,113 @@
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        body {
-            background-color: var(--picpay-light-gray);
-            color: var(--picpay-black);
-            line-height: 1.5;
-            overflow-x: hidden;
-            padding-bottom: 90px;
+        /* Splash Screen - Tela de Entrada */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--picpay-green);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: logoFloat 2s ease-in-out infinite;
+        }
+
+        .picpay-logo {
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            letter-spacing: -1px;
+        }
+
+        .logo-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            margin-top: 5px;
+        }
+
+        .loading-dots {
+            display: flex;
+            margin-top: 40px;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            animation: loadingDot 1.4s ease-in-out infinite;
+        }
+
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .powered-by {
+            position: absolute;
+            bottom: 30px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes loadingDot {
+            0%, 100% { 
+                transform: scale(1);
+                background-color: rgba(255, 255, 255, 0.7);
+            }
+            50% { 
+                transform: scale(1.3);
+                background-color: rgba(255, 255, 255, 1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Conteúdo principal - inicialmente escondido */
+        .main-content {
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        .main-content.visible {
+            display: block;
+            opacity: 1;
         }
 
         /* Header PicPay */
@@ -159,6 +260,7 @@
         /* Main Content */
         .main-container {
             padding: 20px;
+            padding-bottom: 90px;
         }
 
         /* Balance Card */
@@ -642,6 +744,10 @@
             .features-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+            
+            .picpay-logo {
+                font-size: 3.5rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -674,213 +780,228 @@
             .main-container {
                 padding: 15px;
             }
-        }
-
-        /* PicPay Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .floating-icon {
-            animation: float 3s ease-in-out infinite;
+            
+            .picpay-logo {
+                font-size: 3rem;
+            }
+            
+            .logo-subtitle {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header PicPay -->
-    <header class="picpay-header">
-        <div class="header-top">
-            <div class="time-display" id="current-time">14:00</div>
-            <div class="header-actions">
-                <div class="notification-badge">
-                    <i class="fas fa-bell"></i>
-                    <span class="badge">3</span>
-                </div>
-                <i class="fas fa-qrcode"></i>
-            </div>
+    <!-- Splash Screen - Tela de Entrada -->
+    <div class="splash-screen" id="splash-screen">
+        <div class="logo-container">
+            <div class="picpay-logo">PicPay</div>
+            <div class="logo-subtitle">SEU DINHEIRO RENDE MAIS</div>
         </div>
-        
-        <div class="header-content">
-            <div class="user-info">
-                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
-                <div class="user-details">
-                    <h1 id="user-name">Carlos Silva</h1>
-                    <p>
-                        <i class="fas fa-id-card"></i>
-                        <span id="user-account">Conta • Empresas</span>
-                    </p>
-                </div>
-                <button class="edit-icon" id="edit-name-btn">
-                    <i class="fas fa-pen"></i>
-                </button>
-            </div>
+        <div class="loading-dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
-    </header>
+        <div class="powered-by">by PicPay © 2023</div>
+    </div>
 
     <!-- Conteúdo Principal -->
-    <main class="main-container">
-        <!-- Saldo em Conta -->
-        <section class="balance-card">
-            <div class="balance-label">
-                <span>Saldo em conta</span>
-                <span>Serviços: <span class="highlight">100% de CDI</span></span>
+    <div class="main-content" id="main-content">
+        <!-- Header PicPay -->
+        <header class="picpay-header">
+            <div class="header-top">
+                <div class="time-display" id="current-time">14:00</div>
+                <div class="header-actions">
+                    <div class="notification-badge">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">3</span>
+                    </div>
+                    <i class="fas fa-qrcode"></i>
+                </div>
             </div>
-            <div class="balance-value">
-                R$ <span id="balance">2.547,83</span>
-                <button class="balance-edit" id="edit-balance-btn">
-                    <i class="fas fa-edit"></i>
+            
+            <div class="header-content">
+                <div class="user-info">
+                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
+                    <div class="user-details">
+                        <h1 id="user-name">Carlos Silva</h1>
+                        <p>
+                            <i class="fas fa-id-card"></i>
+                            <span id="user-account">Conta • Empresas</span>
+                        </p>
+                    </div>
+                    <button class="edit-icon" id="edit-name-btn">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Conteúdo Principal -->
+        <main class="main-container">
+            <!-- Saldo em Conta -->
+            <section class="balance-card">
+                <div class="balance-label">
+                    <span>Saldo em conta</span>
+                    <span>Serviços: <span class="highlight">100% de CDI</span></span>
+                </div>
+                <div class="balance-value">
+                    R$ <span id="balance">2.547,83</span>
+                    <button class="balance-edit" id="edit-balance-btn">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+                <div class="balance-info">
+                    <span>Use cartão de saldo único</span>
+                    <i class="fas fa-chevron-right"></i>
+                </div>
+            </section>
+
+            <!-- Serviços -->
+            <section class="services-section">
+                <h2 class="section-title">
+                    Serviços
+                    <a href="#" class="see-all">Ver todos</a>
+                </h2>
+                <div class="services-grid">
+                    <a href="pix.html" class="service-card">
+                        <div class="service-icon pix-bg">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <span>Pix</span>
+                    </a>
+                    
+                    <a href="pagar.html" class="service-card">
+                        <div class="service-icon pay-bg">
+                            <i class="fas fa-barcode"></i>
+                        </div>
+                        <span>Pagar</span>
+                    </a>
+                    
+                    <a href="transferir.html" class="service-card">
+                        <div class="service-icon transfer-bg">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <span>Transferir</span>
+                    </a>
+                    
+                    <a href="depositar.html" class="service-card">
+                        <div class="service-icon deposit-bg">
+                            <i class="fas fa-piggy-bank"></i>
+                        </div>
+                        <span>Depositar</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Cartão de Crédito -->
+            <section class="credit-card-section">
+                <div class="card-header">
+                    <h3 class="card-title">Cartão de crédito</h3>
+                    <div class="card-actions">
+                        <button class="card-action-btn">Pagar boleto</button>
+                        <button class="card-action-btn">CDI</button>
+                    </div>
+                </div>
+                
+                <div class="card-details">
+                    <div class="card-number">**** **** **** 4582</div>
+                    <div class="card-type">Virtual</div>
+                </div>
+                
+                <div class="card-limits">
+                    <div class="limit-item">
+                        <span class="limit-label">Limite disponível</span>
+                        <span class="limit-value">R$ 1.450,00</span>
+                    </div>
+                    <div class="limit-item">
+                        <span class="limit-label">Fatura atual</span>
+                        <span class="limit-value">R$ 320,50</span>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-plus-circle"></i> Adicionar cartão
                 </button>
-            </div>
-            <div class="balance-info">
-                <span>Use cartão de saldo único</span>
-                <i class="fas fa-chevron-right"></i>
-            </div>
-        </section>
+            </section>
 
-        <!-- Serviços -->
-        <section class="services-section">
-            <h2 class="section-title">
-                Serviços
-                <a href="#" class="see-all">Ver todos</a>
-            </h2>
-            <div class="services-grid">
-                <a href="pix.html" class="service-card">
-                    <div class="service-icon pix-bg floating-icon">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <span>Pix</span>
-                </a>
-                
-                <a href="pagar.html" class="service-card">
-                    <div class="service-icon pay-bg">
-                        <i class="fas fa-barcode"></i>
-                    </div>
-                    <span>Pagar</span>
-                </a>
-                
-                <a href="transferir.html" class="service-card">
-                    <div class="service-icon transfer-bg">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <span>Transferir</span>
-                </a>
-                
-                <a href="depositar.html" class="service-card">
-                    <div class="service-icon deposit-bg">
-                        <i class="fas fa-piggy-bank"></i>
-                    </div>
-                    <span>Depositar</span>
-                </a>
-            </div>
-        </section>
-
-        <!-- Cartão de Crédito -->
-        <section class="credit-card-section">
-            <div class="card-header">
-                <h3 class="card-title">Cartão de crédito</h3>
-                <div class="card-actions">
-                    <button class="card-action-btn">Pagar boleto</button>
-                    <button class="card-action-btn">CDI</button>
+            <!-- Mais Funcionalidades -->
+            <section class="services-section">
+                <h2 class="section-title">
+                    Pra você
+                    <a href="#" class="see-all">Ver todos</a>
+                </h2>
+                <div class="features-grid">
+                    <a href="#" class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #ff9f43, #ff7f00);">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h3>Cashback</h3>
+                            <p>Ganhe dinheiro de volta</p>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h3>Investir</h3>
+                            <p>Renda seus recursos</p>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h3>Seguros</h3>
+                            <p>Proteção para você</p>
+                        </div>
+                    </a>
+                    
+                    <a href="#" class="feature-card">
+                        <div class="feature-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="feature-info">
+                            <h3>Recarga</h3>
+                            <p>Celular, transporte</p>
+                        </div>
+                    </a>
                 </div>
-            </div>
-            
-            <div class="card-details">
-                <div class="card-number">**** **** **** 4582</div>
-                <div class="card-type">Virtual</div>
-            </div>
-            
-            <div class="card-limits">
-                <div class="limit-item">
-                    <span class="limit-label">Limite disponível</span>
-                    <span class="limit-value">R$ 1.450,00</span>
-                </div>
-                <div class="limit-item">
-                    <span class="limit-label">Fatura atual</span>
-                    <span class="limit-value">R$ 320,50</span>
-                </div>
-            </div>
-            
-            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
-                <i class="fas fa-plus-circle"></i> Adicionar cartão
-            </button>
-        </section>
+            </section>
+        </main>
 
-        <!-- Mais Funcionalidades -->
-        <section class="services-section">
-            <h2 class="section-title">
-                Pra você
-                <a href="#" class="see-all">Ver todos</a>
-            </h2>
-            <div class="features-grid">
-                <a href="#" class="feature-card">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #ff9f43, #ff7f00);">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Cashback</h3>
-                        <p>Ganhe dinheiro de volta</p>
-                    </div>
-                </a>
-                
-                <a href="#" class="feature-card">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Investir</h3>
-                        <p>Renda seus recursos</p>
-                    </div>
-                </a>
-                
-                <a href="#" class="feature-card">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Seguros</h3>
-                        <p>Proteção para você</p>
-                    </div>
-                </a>
-                
-                <a href="#" class="feature-card">
-                    <div class="feature-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Recarga</h3>
-                        <p>Celular, transporte</p>
-                    </div>
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <!-- Navegação Inferior -->
-    <nav class="bottom-nav">
-        <a href="home.html" class="nav-item active">
-            <i class="fas fa-home nav-icon"></i>
-            <span class="nav-label">Início</span>
-        </a>
-        <a href="carteira.html" class="nav-item">
-            <i class="fas fa-wallet nav-icon"></i>
-            <span class="nav-label">Carteira</span>
-        </a>
-        <a href="#" class="nav-item" style="position: relative; top: -20px;">
-            <div style="background: var(--picpay-green); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(17, 199, 111, 0.3);">
-                <i class="fas fa-qrcode"></i>
-            </div>
-            <span class="nav-label">Pix</span>
-        </a>
-        <a href="notificacoes.html" class="nav-item">
-            <i class="fas fa-bell nav-icon"></i>
-            <span class="nav-label">Notificações</span>
-        </a>
-        <a href="mais.html" class="nav-item">
-            <i class="fas fa-ellipsis-h nav-icon"></i>
-            <span class="nav-label">Mais</span>
-        </a>
-    </nav>
+        <!-- Navegação Inferior -->
+        <nav class="bottom-nav">
+            <a href="home.html" class="nav-item active">
+                <i class="fas fa-home nav-icon"></i>
+                <span class="nav-label">Início</span>
+            </a>
+            <a href="carteira.html" class="nav-item">
+                <i class="fas fa-wallet nav-icon"></i>
+                <span class="nav-label">Carteira</span>
+            </a>
+            <a href="#" class="nav-item" style="position: relative; top: -20px;">
+                <div style="background: var(--picpay-green); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(17, 199, 111, 0.3);">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <span class="nav-label">Pix</span>
+            </a>
+            <a href="notificacoes.html" class="nav-item">
+                <i class="fas fa-bell nav-icon"></i>
+                <span class="nav-label">Notificações</span>
+            </a>
+            <a href="mais.html" class="nav-item">
+                <i class="fas fa-ellipsis-h nav-icon"></i>
+                <span class="nav-label">Mais</span>
+            </a>
+        </nav>
+    </div>
 
     <!-- Modal para editar nome -->
     <div class="modal" id="name-modal">
@@ -955,6 +1076,19 @@
     </div>
 
     <script>
+        // Elementos da splash screen
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+        
+        // Mostrar splash screen por 3 segundos, depois mostrar conteúdo principal
+        setTimeout(() => {
+            splashScreen.classList.add('hidden');
+            
+            setTimeout(() => {
+                mainContent.classList.add('visible');
+            }, 500); // Aguardar a animação de fade out terminar
+        }, 3000); // 3 segundos
+        
         // Elementos DOM
         const userNameElement = document.getElementById('user-name');
         const userAccountElement = document.getElementById('user-account');
@@ -1150,43 +1284,30 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadUserData();
             
-            // Efeito de entrada
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.5s';
+            // Efeito de digitação no saldo (opcional)
+            const balanceText = balanceElement.textContent;
+            balanceElement.textContent = '';
+            let balanceIndex = 0;
             
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
+            function typeBalance() {
+                if (balanceIndex < balanceText.length) {
+                    balanceElement.textContent += balanceText.charAt(balanceIndex);
+                    balanceIndex++;
+                    setTimeout(typeBalance, 50);
+                }
+            }
             
-            // Efeito nos cards
-            const cards = document.querySelectorAll('.service-card, .feature-card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'all 0.5s ease';
-                
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, 100 + (index * 100));
-            });
+            // Iniciar efeito após a splash screen
+            setTimeout(typeBalance, 3500);
         });
 
-        // Efeito de digitação no saldo (opcional)
-        const balanceText = balanceElement.textContent;
-        balanceElement.textContent = '';
-        let balanceIndex = 0;
-        
-        function typeBalance() {
-            if (balanceIndex < balanceText.length) {
-                balanceElement.textContent += balanceText.charAt(balanceIndex);
-                balanceIndex++;
-                setTimeout(typeBalance, 50);
-            }
-        }
-        
-        // Iniciar efeito após carregamento
-        setTimeout(typeBalance, 500);
+        // Pular a splash screen se o usuário clicar nela
+        splashScreen.addEventListener('click', () => {
+            splashScreen.classList.add('hidden');
+            setTimeout(() => {
+                mainContent.classList.add('visible');
+            }, 500);
+        });
     </script>
 </body>
 </html>
