@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicPay - Tela Inicial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Cores e variáveis do PicPay */
+        :root {
+            --picpay-green: #11c76f;
+            --picpay-dark-green: #0da858;
+            --picpay-black: #1a1a1a;
+            --picpay-gray: #3a3a3a;
+            --picpay-light-gray: #f5f5f5;
+            --picpay-white: #ffffff;
+            --picpay-yellow: #ffc107;
+            --picpay-blue: #007bff;
+            --picpay-red: #dc3545;
+            --picpay-purple: #6f42c1;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--picpay-light-gray);
+            color: var(--picpay-black);
+            line-height: 1.5;
+            overflow-x: hidden;
+            padding-bottom: 90px;
+        }
+
+        /* Header PicPay */
+        .picpay-header {
+            background-color: var(--picpay-green);
+            padding: 15px 0 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .time-display {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--picpay-white);
+            background: rgba(0, 0, 0, 0.15);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 20px;
+            color: var(--picpay-white);
+            font-size: 1.2rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+            border-color: var(--picpay-white);
+        }
+
+        .user-details h1 {
+            font-size: 1.3rem;
+            color: var(--picpay-white);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .user-details p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .edit-icon {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .edit-icon:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: var(--picpay-red);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Main Content */
+        .main-container {
+            padding: 20px;
+        }
+
+        /* Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, var(--picpay-green), var(--picpay-dark-green));
+            border-radius: var(--radius);
+            padding: 25px;
+            color: white;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .balance-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .balance-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-edit {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .balance-edit:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(15deg);
+        }
+
+        .balance-info {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 12px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .highlight {
+            color: var(--picpay-yellow);
+            font-weight: 600;
+        }
+
+        /* Services Grid */
+        .services-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--picpay-black);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .see-all {
+            color: var(--picpay-green);
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .see-all:hover {
+            opacity: 0.8;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .service-card {
+            background-color: var(--picpay-white);
+            border-radius: var(--radius);
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            color: var(--picpay-black);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        .pix-bg {
+            background: linear-gradient(135deg, var(--picpay-green), #0da858);
+        }
+
+        .pay-bg {
+            background: linear-gradient(135deg, var(--picpay-blue), #0056b3);
+        }
+
+        .transfer-bg {
+            background: linear-gradient(135deg, var(--picpay-purple), #5a3d8a);
+        }
+
+        .deposit-bg {
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+        }
+
+        .service-card span {
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* Credit Card Section */
+        .credit-card-section {
+            background-color: var(--picpay-white);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .card-action-btn {
+            background-color: #f8f9fa;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--picpay-gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .card-action-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-number {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--picpay-black);
+            letter-spacing: 1px;
+        }
+
+        .card-type {
+            background-color: var(--picpay-light-gray);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--picpay-gray);
+        }
+
+        .card-limits {
+            display: flex;
+            gap: 30px;
+        }
+
+        .limit-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .limit-label {
+            font-size: 0.8rem;
+            color: var(--picpay-gray);
+            margin-bottom: 5px;
+        }
+
+        .limit-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .feature-card {
+            background-color: var(--picpay-white);
+            border-radius: var(--radius);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow);
+            text-decoration: none;
+            color: var(--picpay-black);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .feature-info h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .feature-info p {
+            font-size: 0.8rem;
+            color: var(--picpay-gray);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--picpay-white);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            color: var(--picpay-gray);
+            transition: var(--transition);
+            text-decoration: none;
+            flex: 1;
+        }
+
+        .nav-item.active, .nav-item:hover {
+            color: var(--picpay-green);
+        }
+
+        .nav-icon {
+            font-size: 1.4rem;
+        }
+
+        .nav-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .modal-content {
+            background-color: var(--picpay-white);
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+        }
+
+        .close-modal {
+            background: #f5f5f5;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--picpay-gray);
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            background: #e9e9e9;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--picpay-black);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #fafafa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--picpay-green);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(17, 199, 111, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background-color: var(--picpay-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--picpay-dark-green);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--picpay-black);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+            
+            .balance-value {
+                font-size: 2rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .balance-value {
+                font-size: 1.8rem;
+            }
+            
+            .card-limits {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-top {
+                padding: 0 15px;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .main-container {
+                padding: 15px;
+            }
+        }
+
+        /* PicPay Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header PicPay -->
+    <header class="picpay-header">
+        <div class="header-top">
+            <div class="time-display" id="current-time">14:00</div>
+            <div class="header-actions">
+                <div class="notification-badge">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+                <i class="fas fa-qrcode"></i>
+            </div>
+        </div>
+        
+        <div class="header-content">
+            <div class="user-info">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Foto de perfil" class="profile-pic" id="profile-pic">
+                <div class="user-details">
+                    <h1 id="user-name">Carlos Silva</h1>
+                    <p>
+                        <i class="fas fa-id-card"></i>
+                        <span id="user-account">Conta • Empresas</span>
+                    </p>
+                </div>
+                <button class="edit-icon" id="edit-name-btn">
+                    <i class="fas fa-pen"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <main class="main-container">
+        <!-- Saldo em Conta -->
+        <section class="balance-card">
+            <div class="balance-label">
+                <span>Saldo em conta</span>
+                <span>Serviços: <span class="highlight">100% de CDI</span></span>
+            </div>
+            <div class="balance-value">
+                R$ <span id="balance">2.547,83</span>
+                <button class="balance-edit" id="edit-balance-btn">
+                    <i class="fas fa-edit"></i>
+                </button>
+            </div>
+            <div class="balance-info">
+                <span>Use cartão de saldo único</span>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+        </section>
+
+        <!-- Serviços -->
+        <section class="services-section">
+            <h2 class="section-title">
+                Serviços
+                <a href="#" class="see-all">Ver todos</a>
+            </h2>
+            <div class="services-grid">
+                <a href="pix.html" class="service-card">
+                    <div class="service-icon pix-bg floating-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <span>Pix</span>
+                </a>
+                
+                <a href="pagar.html" class="service-card">
+                    <div class="service-icon pay-bg">
+                        <i class="fas fa-barcode"></i>
+                    </div>
+                    <span>Pagar</span>
+                </a>
+                
+                <a href="transferir.html" class="service-card">
+                    <div class="service-icon transfer-bg">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <span>Transferir</span>
+                </a>
+                
+                <a href="depositar.html" class="service-card">
+                    <div class="service-icon deposit-bg">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <span>Depositar</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Cartão de Crédito -->
+        <section class="credit-card-section">
+            <div class="card-header">
+                <h3 class="card-title">Cartão de crédito</h3>
+                <div class="card-actions">
+                    <button class="card-action-btn">Pagar boleto</button>
+                    <button class="card-action-btn">CDI</button>
+                </div>
+            </div>
+            
+            <div class="card-details">
+                <div class="card-number">**** **** **** 4582</div>
+                <div class="card-type">Virtual</div>
+            </div>
+            
+            <div class="card-limits">
+                <div class="limit-item">
+                    <span class="limit-label">Limite disponível</span>
+                    <span class="limit-value">R$ 1.450,00</span>
+                </div>
+                <div class="limit-item">
+                    <span class="limit-label">Fatura atual</span>
+                    <span class="limit-value">R$ 320,50</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                <i class="fas fa-plus-circle"></i> Adicionar cartão
+            </button>
+        </section>
+
+        <!-- Mais Funcionalidades -->
+        <section class="services-section">
+            <h2 class="section-title">
+                Pra você
+                <a href="#" class="see-all">Ver todos</a>
+            </h2>
+            <div class="features-grid">
+                <a href="#" class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #ff9f43, #ff7f00);">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Cashback</h3>
+                        <p>Ganhe dinheiro de volta</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #2ecc71, #27ae60);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Investir</h3>
+                        <p>Renda seus recursos</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Seguros</h3>
+                        <p>Proteção para você</p>
+                    </div>
+                </a>
+                
+                <a href="#" class="feature-card">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #3498db, #2980b9);">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="feature-info">
+                        <h3>Recarga</h3>
+                        <p>Celular, transporte</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Navegação Inferior -->
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item active">
+            <i class="fas fa-home nav-icon"></i>
+            <span class="nav-label">Início</span>
+        </a>
+        <a href="carteira.html" class="nav-item">
+            <i class="fas fa-wallet nav-icon"></i>
+            <span class="nav-label">Carteira</span>
+        </a>
+        <a href="#" class="nav-item" style="position: relative; top: -20px;">
+            <div style="background: var(--picpay-green); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; box-shadow: 0 4px 12px rgba(17, 199, 111, 0.3);">
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <span class="nav-label">Pix</span>
+        </a>
+        <a href="notificacoes.html" class="nav-item">
+            <i class="fas fa-bell nav-icon"></i>
+            <span class="nav-label">Notificações</span>
+        </a>
+        <a href="mais.html" class="nav-item">
+            <i class="fas fa-ellipsis-h nav-icon"></i>
+            <span class="nav-label">Mais</span>
+        </a>
+    </nav>
+
+    <!-- Modal para editar nome -->
+    <div class="modal" id="name-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar nome</h2>
+                <button class="close-modal" id="close-name-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="new-name" class="form-label">Seu nome completo</label>
+                <input type="text" id="new-name" class="form-input" placeholder="Digite seu nome">
+            </div>
+            <div class="form-group">
+                <label for="user-account-input" class="form-label">Tipo de conta</label>
+                <select id="user-account-input" class="form-input">
+                    <option value="Conta • Empresas">Conta • Empresas</option>
+                    <option value="Conta • Pessoa Física">Conta • Pessoa Física</option>
+                    <option value="Conta • Universitária">Conta • Universitária</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-name">Cancelar</button>
+                <button class="btn btn-primary" id="save-name">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar saldo -->
+    <div class="modal" id="balance-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar saldo</h2>
+                <button class="close-modal" id="close-balance-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="new-balance" class="form-label">Novo valor do saldo</label>
+                <input type="text" id="new-balance" class="form-input" placeholder="Ex: 3.500,75">
+                <p style="margin-top: 10px; font-size: 0.85rem; color: var(--picpay-gray);">
+                    Formato brasileiro: use vírgula para centavos
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-balance">Cancelar</button>
+                <button class="btn btn-primary" id="save-balance">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para alterar foto de perfil -->
+    <div class="modal" id="photo-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Alterar foto de perfil</h2>
+                <button class="close-modal" id="close-photo-modal">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="photo-url" class="form-label">URL da nova foto</label>
+                <input type="text" id="photo-url" class="form-input" placeholder="Cole a URL de uma imagem">
+                <p style="margin-top: 10px; font-size: 0.85rem; color: var(--picpay-gray);">
+                    Dica: Você pode usar <a href="https://randomuser.me" target="_blank" style="color: var(--picpay-green);">randomuser.me</a> para encontrar fotos de perfil
+                </p>
+            </div>
+            <div class="form-group">
+                <label for="photo-upload" class="form-label">Ou faça upload de uma foto</label>
+                <input type="file" id="photo-upload" class="form-input" accept="image/*" style="padding: 12px;">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" id="cancel-photo">Cancelar</button>
+                <button class="btn btn-primary" id="save-photo">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const userNameElement = document.getElementById('user-name');
+        const userAccountElement = document.getElementById('user-account');
+        const balanceElement = document.getElementById('balance');
+        const profilePicElement = document.getElementById('profile-pic');
+        const currentTimeElement = document.getElementById('current-time');
+        
+        // Atualizar horário
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            currentTimeElement.textContent = `${hours}:${minutes}`;
+        }
+        
+        // Atualizar a cada minuto
+        updateTime();
+        setInterval(updateTime, 60000);
+        
+        // Botões de edição
+        const editNameBtn = document.getElementById('edit-name-btn');
+        const editBalanceBtn = document.getElementById('edit-balance-btn');
+        
+        // Modais
+        const nameModal = document.getElementById('name-modal');
+        const balanceModal = document.getElementById('balance-modal');
+        const photoModal = document.getElementById('photo-modal');
+        
+        // Botões para fechar modais
+        const closeNameModal = document.getElementById('close-name-modal');
+        const closeBalanceModal = document.getElementById('close-balance-modal');
+        const closePhotoModal = document.getElementById('close-photo-modal');
+        
+        // Botões de cancelar
+        const cancelNameBtn = document.getElementById('cancel-name');
+        const cancelBalanceBtn = document.getElementById('cancel-balance');
+        const cancelPhotoBtn = document.getElementById('cancel-photo');
+        
+        // Botões de salvar
+        const saveNameBtn = document.getElementById('save-name');
+        const saveBalanceBtn = document.getElementById('save-balance');
+        const savePhotoBtn = document.getElementById('save-photo');
+        
+        // Inputs dos formulários
+        const newNameInput = document.getElementById('new-name');
+        const userAccountInput = document.getElementById('user-account-input');
+        const newBalanceInput = document.getElementById('new-balance');
+        const photoUrlInput = document.getElementById('photo-url');
+        const photoUploadInput = document.getElementById('photo-upload');
+
+        // Carregar dados do LocalStorage
+        function loadUserData() {
+            const savedName = localStorage.getItem('picpayUserName');
+            const savedAccount = localStorage.getItem('picpayUserAccount');
+            const savedBalance = localStorage.getItem('picpayBalance');
+            const savedPhoto = localStorage.getItem('picpayProfilePhoto');
+            
+            if (savedName) userNameElement.textContent = savedName;
+            if (savedAccount) {
+                userAccountElement.textContent = savedAccount;
+                userAccountInput.value = savedAccount;
+            }
+            if (savedBalance) balanceElement.textContent = savedBalance;
+            if (savedPhoto) profilePicElement.src = savedPhoto;
+        }
+
+        // Salvar dados no LocalStorage
+        function saveToLocalStorage(key, value) {
+            localStorage.setItem(key, value);
+        }
+
+        // Abrir modais
+        editNameBtn.addEventListener('click', () => {
+            newNameInput.value = userNameElement.textContent;
+            nameModal.style.display = 'flex';
+        });
+
+        editBalanceBtn.addEventListener('click', () => {
+            newBalanceInput.value = balanceElement.textContent;
+            balanceModal.style.display = 'flex';
+        });
+
+        profilePicElement.addEventListener('click', () => {
+            photoUrlInput.value = profilePicElement.src;
+            photoModal.style.display = 'flex';
+        });
+
+        // Fechar modais
+        function closeAllModals() {
+            nameModal.style.display = 'none';
+            balanceModal.style.display = 'none';
+            photoModal.style.display = 'none';
+            photoUploadInput.value = '';
+        }
+
+        closeNameModal.addEventListener('click', closeAllModals);
+        closeBalanceModal.addEventListener('click', closeAllModals);
+        closePhotoModal.addEventListener('click', closeAllModals);
+        
+        cancelNameBtn.addEventListener('click', closeAllModals);
+        cancelBalanceBtn.addEventListener('click', closeAllModals);
+        cancelPhotoBtn.addEventListener('click', closeAllModals);
+
+        // Salvar alterações
+        saveNameBtn.addEventListener('click', () => {
+            const newName = newNameInput.value.trim();
+            const newAccount = userAccountInput.value;
+            
+            if (newName) {
+                userNameElement.textContent = newName;
+                userAccountElement.textContent = newAccount;
+                saveToLocalStorage('picpayUserName', newName);
+                saveToLocalStorage('picpayUserAccount', newAccount);
+                closeAllModals();
+            }
+        });
+
+        saveBalanceBtn.addEventListener('click', () => {
+            const newBalance = newBalanceInput.value.trim();
+            if (newBalance) {
+                // Formatar o saldo
+                const formattedBalance = newBalance.replace(/[^\d,]/g, '');
+                if (formattedBalance) {
+                    balanceElement.textContent = formattedBalance;
+                    saveToLocalStorage('picpayBalance', formattedBalance);
+                    closeAllModals();
+                }
+            }
+        });
+
+        savePhotoBtn.addEventListener('click', () => {
+            const newPhotoUrl = photoUrlInput.value.trim();
+            const file = photoUploadInput.files[0];
+            
+            if (file) {
+                // Upload de arquivo local
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profilePicElement.src = e.target.result;
+                    saveToLocalStorage('picpayProfilePhoto', e.target.result);
+                    closeAllModals();
+                };
+                reader.readAsDataURL(file);
+            } else if (newPhotoUrl) {
+                // URL de imagem
+                const img = new Image();
+                img.onload = function() {
+                    profilePicElement.src = newPhotoUrl;
+                    saveToLocalStorage('picpayProfilePhoto', newPhotoUrl);
+                    closeAllModals();
+                };
+                img.onerror = function() {
+                    alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
+                };
+                img.src = newPhotoUrl;
+            }
+        });
+
+        // Fechar modal ao clicar fora
+        window.addEventListener('click', (event) => {
+            if (event.target === nameModal || event.target === balanceModal || event.target === photoModal) {
+                closeAllModals();
+            }
+        });
+
+        // Simular funcionalidade dos botões
+        document.querySelectorAll('.service-card, .feature-card, .nav-item, .card-action-btn').forEach(button => {
+            button.addEventListener('click', (e) => {
+                if (button.getAttribute('href') === '#' || button.tagName === 'BUTTON') {
+                    e.preventDefault();
+                    const buttonText = button.textContent.trim() || button.querySelector('span')?.textContent || 'este botão';
+                    alert(`Funcionalidade do PicPay em desenvolvimento!\nAção: ${buttonText}`);
+                }
+            });
+        });
+
+        // Efeitos visuais
+        document.querySelectorAll('.service-card, .feature-card').forEach(card => {
+            card.addEventListener('mousedown', () => {
+                card.style.transform = 'scale(0.97)';
+            });
+            
+            card.addEventListener('mouseup', () => {
+                card.style.transform = '';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // Carregar dados ao iniciar
+        window.addEventListener('DOMContentLoaded', () => {
+            loadUserData();
+            
+            // Efeito de entrada
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.5s';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+            
+            // Efeito nos cards
+            const cards = document.querySelectorAll('.service-card, .feature-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (index * 100));
+            });
+        });
+
+        // Efeito de digitação no saldo (opcional)
+        const balanceText = balanceElement.textContent;
+        balanceElement.textContent = '';
+        let balanceIndex = 0;
+        
+        function typeBalance() {
+            if (balanceIndex < balanceText.length) {
+                balanceElement.textContent += balanceText.charAt(balanceIndex);
+                balanceIndex++;
+                setTimeout(typeBalance, 50);
+            }
+        }
+        
+        // Iniciar efeito após carregamento
+        setTimeout(typeBalance, 500);
+    </script>
+</body>
+</html>
