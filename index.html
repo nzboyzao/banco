@@ -1333,13 +1333,8 @@
 
     <script>
         // ==============================================
-        // CREDENCIAIS DE LOGIN - APENAS 4 PAIRES FUNCIONAM
+        // CREDENCIAIS DE LOGIN
         // ==============================================
-        // CPF e senhas que funcionam:
-        // 1. CPF: 490.589.118-37 / Senha: 1814Enzo
-        // 2. CPF: 111.222.333-44 / Senha: adm
-        // ==============================================
-        
         const validCredentials = [
             {
                 cpf: '49058911837',
@@ -1376,43 +1371,56 @@
         // Variável para armazenar o usuário atual
         let currentUser = null;
         
-        // VERIFICAR SE JÁ ESTÁ LOGADO AO CARREGAR A PÁGINA
+        // Elementos DOM do app
+        const userNameElement = document.getElementById('user-name');
+        const userAccountElement = document.getElementById('user-account');
+        const balanceElement = document.getElementById('balance');
+        const profilePicElement = document.getElementById('profile-pic');
+        const currentTimeElement = document.getElementById('current-time');
+        
+        // ==============================================
+        // INICIALIZAÇÃO DA PÁGINA
+        // ==============================================
         document.addEventListener('DOMContentLoaded', function() {
-            const loggedInUser = localStorage.getItem('picpay_logged_in_user');
-            const userData = localStorage.getItem('picpay_user_data');
+            // Verificar se já está logado
+            checkIfLoggedIn();
             
-            if (loggedInUser && userData) {
-                // Se já estiver logado, pular splash e login
-                splashScreen.style.display = 'none';
-                loginScreen.style.display = 'none';
-                
-                // Carregar dados do usuário
-                const parsedUserData = JSON.parse(userData);
-                const userCpf = parsedUserData.cpf || loggedInUser;
-                
-                // Encontrar o usuário nas credenciais
-                currentUser = validCredentials.find(cred => cred.cpf === userCpf);
+            // Inicializar eventos
+            initLoginEvents();
+        });
+        
+        // ==============================================
+        // FUNÇÕES DE LOGIN
+        // ==============================================
+        function checkIfLoggedIn() {
+            const loggedInUser = localStorage.getItem('picpay_logged_in_user');
+            
+            if (loggedInUser) {
+                // Tentar encontrar o usuário nas credenciais
+                currentUser = validCredentials.find(cred => cred.cpf === loggedInUser);
                 
                 if (currentUser) {
-                    // Carregar dados do localStorage
+                    // Carregar dados do usuário
                     loadUserData();
                     
-                    // Mostrar conteúdo principal
+                    // Mostrar conteúdo principal diretamente
+                    splashScreen.style.display = 'none';
+                    loginScreen.style.display = 'none';
                     mainContent.classList.add('visible');
                     
                     // Atualizar horário
                     updateTime();
                     setInterval(updateTime, 60000);
                     
-                    // Inicializar eventos
+                    // Inicializar eventos do app
                     initAppEvents();
                     
                     console.log('Usuário já logado:', currentUser.cpfFormatted);
-                    return;
+                    return true;
                 }
             }
             
-            // Se não estiver logado, mostrar fluxo normal
+            // Se não estiver logado, mostrar splash screen
             setTimeout(() => {
                 splashScreen.classList.add('hidden');
                 
@@ -1420,80 +1428,97 @@
                     loginScreen.classList.remove('hidden');
                 }, 500);
             }, 2000);
-        });
+            
+            return false;
+        }
         
-        // Alternar visibilidade da senha
-        togglePasswordBtn.addEventListener('click', function() {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            
-            const icon = this.querySelector('i');
-            if (type === 'text') {
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
-        });
-        
-        // Formatar CPF enquanto digita
-        cpfInput.addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            if (value.length > 3) {
-                value = value.substring(0, 3) + '.' + value.substring(3);
-            }
-            if (value.length > 7) {
-                value = value.substring(0, 7) + '.' + value.substring(7);
-            }
-            if (value.length > 11) {
-                value = value.substring(0, 11) + '-' + value.substring(11, 13);
-            }
-            
-            e.target.value = value;
-        });
-        
-        // Processar login
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const cpf = cpfInput.value.replace(/\D/g, '');
-            const password = passwordInput.value.trim();
-            
-            if (!cpf || cpf.length !== 11) {
-                showError('Por favor, insira um CPF válido (11 dígitos)');
-                return;
-            }
-            
-            if (!password) {
-                showError('Por favor, insira sua senha');
-                return;
-            }
-            
-            const user = validCredentials.find(cred => 
-                cred.cpf === cpf && cred.password === password
-            );
-            
-            if (user) {
-                currentUser = user;
+        function initLoginEvents() {
+            // Alternar visibilidade da senha
+            togglePasswordBtn.addEventListener('click', function() {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
                 
-                // Salvar estado de login se "Lembrar-me" estiver marcado
-                if (rememberMeCheckbox.checked) {
-                    localStorage.setItem('picpay_logged_in_user', user.cpf);
-                    
-                    // Salvar dados padrão do usuário se for a primeira vez
-                    const userKey = `picpay_user_${user.cpf}`;
-                    if (!localStorage.getItem(userKey)) {
-                        saveDefaultUserData(user);
-                    }
+                const icon = this.querySelector('i');
+                if (type === 'text') {
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            });
+            
+            // Formatar CPF enquanto digita
+            cpfInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 3) {
+                    value = value.substring(0, 3) + '.' + value.substring(3);
+                }
+                if (value.length > 7) {
+                    value = value.substring(0, 7) + '.' + value.substring(7);
+                }
+                if (value.length > 11) {
+                    value = value.substring(0, 11) + '-' + value.substring(11, 13);
                 }
                 
-                loginSuccess();
-            } else {
-                showError('CPF ou senha incorretos');
-            }
-        });
+                e.target.value = value;
+            });
+            
+            // Processar login
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const cpf = cpfInput.value.replace(/\D/g, '');
+                const password = passwordInput.value.trim();
+                
+                if (!cpf || cpf.length !== 11) {
+                    showError('Por favor, insira um CPF válido (11 dígitos)');
+                    return;
+                }
+                
+                if (!password) {
+                    showError('Por favor, insira sua senha');
+                    return;
+                }
+                
+                const user = validCredentials.find(cred => 
+                    cred.cpf === cpf && cred.password === password
+                );
+                
+                if (user) {
+                    currentUser = user;
+                    
+                    // Salvar estado de login
+                    if (rememberMeCheckbox.checked) {
+                        localStorage.setItem('picpay_logged_in_user', user.cpf);
+                    }
+                    
+                    // Salvar dados padrão do usuário se for a primeira vez
+                    saveUserDataToStorage(true);
+                    
+                    // Login bem-sucedido
+                    loginSuccess();
+                } else {
+                    showError('CPF ou senha incorretos');
+                }
+            });
+            
+            // Permitir login com Enter
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            });
+            
+            // Pular splash screen se o usuário clicar nela
+            splashScreen.addEventListener('click', () => {
+                splashScreen.classList.add('hidden');
+                setTimeout(() => {
+                    loginScreen.classList.remove('hidden');
+                }, 500);
+            });
+        }
         
         function showError(message) {
             errorMessage.textContent = message;
@@ -1507,9 +1532,6 @@
         function loginSuccess() {
             loginScreen.classList.add('hidden');
             
-            // Salvar dados padrão se for primeiro login
-            saveDefaultUserData(currentUser);
-            
             // Carregar dados do usuário
             loadUserData();
             
@@ -1517,53 +1539,50 @@
             setTimeout(() => {
                 mainContent.classList.add('visible');
                 
+                // Atualizar horário
+                updateTime();
+                setInterval(updateTime, 60000);
+                
                 // Inicializar eventos do app
                 initAppEvents();
             }, 500);
         }
         
-        // Permitir login com Enter
-        passwordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginForm.dispatchEvent(new Event('submit'));
+        // ==============================================
+        // FUNÇÕES DE DADOS DO USUÁRIO
+        // ==============================================
+        function saveUserDataToStorage(isFirstTime = false) {
+            if (!currentUser) return;
+            
+            const userKey = `picpay_user_${currentUser.cpf}`;
+            let userData;
+            
+            if (isFirstTime) {
+                // Dados iniciais
+                userData = {
+                    cpf: currentUser.cpf,
+                    name: currentUser.defaultName,
+                    account: 'Conta • Empresas',
+                    balance: currentUser.defaultBalance,
+                    photo: currentUser.defaultPhoto,
+                    lastUpdate: new Date().toISOString()
+                };
+            } else {
+                // Dados atuais da tela
+                userData = {
+                    cpf: currentUser.cpf,
+                    name: userNameElement.textContent,
+                    account: userAccountElement.textContent,
+                    balance: balanceElement.textContent,
+                    photo: profilePicElement.src,
+                    lastUpdate: new Date().toISOString()
+                };
             }
-        });
-        
-        // Elementos DOM do app
-        const userNameElement = document.getElementById('user-name');
-        const userAccountElement = document.getElementById('user-account');
-        const balanceElement = document.getElementById('balance');
-        const profilePicElement = document.getElementById('profile-pic');
-        const currentTimeElement = document.getElementById('current-time');
-        
-        // Atualizar horário
-        function updateTime() {
-            const now = new Date();
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            currentTimeElement.textContent = `${hours}:${minutes}`;
+            
+            // Salvar no localStorage
+            localStorage.setItem(userKey, JSON.stringify(userData));
         }
         
-        // Salvar dados padrão do usuário
-        function saveDefaultUserData(user) {
-            if (!user) return;
-            
-            const userKey = `picpay_user_${user.cpf}`;
-            
-            const defaultData = {
-                cpf: user.cpf,
-                name: user.defaultName,
-                account: 'Conta • Empresas',
-                balance: user.defaultBalance,
-                photo: user.defaultPhoto,
-                lastUpdate: new Date().toISOString()
-            };
-            
-            localStorage.setItem(userKey, JSON.stringify(defaultData));
-            localStorage.setItem('picpay_user_data', JSON.stringify(defaultData));
-        }
-        
-        // Carregar dados do usuário do LocalStorage
         function loadUserData() {
             if (!currentUser) return;
             
@@ -1572,23 +1591,25 @@
             
             if (savedData) {
                 const userData = JSON.parse(savedData);
+                
+                // Aplicar dados salvos
                 userNameElement.textContent = userData.name || currentUser.defaultName;
                 userAccountElement.textContent = userData.account || 'Conta • Empresas';
                 balanceElement.textContent = userData.balance || currentUser.defaultBalance;
                 profilePicElement.src = userData.photo || currentUser.defaultPhoto;
-                
-                // Atualizar dados gerais também
-                localStorage.setItem('picpay_user_data', savedData);
             } else {
+                // Usar dados padrão
                 userNameElement.textContent = currentUser.defaultName;
                 userAccountElement.textContent = 'Conta • Empresas';
                 balanceElement.textContent = currentUser.defaultBalance;
                 profilePicElement.src = currentUser.defaultPhoto;
+                
+                // Salvar dados padrão
+                saveUserDataToStorage(true);
             }
         }
         
-        // Salvar dados do usuário no LocalStorage
-        function saveUserData() {
+        function updateUserData() {
             if (!currentUser) return;
             
             const userKey = `picpay_user_${currentUser.cpf}`;
@@ -1603,10 +1624,19 @@
             };
             
             localStorage.setItem(userKey, JSON.stringify(userData));
-            localStorage.setItem('picpay_user_data', JSON.stringify(userData));
+            console.log('Dados atualizados:', userData);
         }
         
-        // Inicializar eventos do app
+        // ==============================================
+        // FUNÇÕES DO APP
+        // ==============================================
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            currentTimeElement.textContent = `${hours}:${minutes}`;
+        }
+        
         function initAppEvents() {
             // Botões de edição
             const editNameBtn = document.getElementById('edit-name-btn');
@@ -1639,24 +1669,26 @@
             const photoUrlInput = document.getElementById('photo-url');
             const photoUploadInput = document.getElementById('photo-upload');
 
-            // Abrir modais
+            // Abrir modal de editar nome
             editNameBtn.addEventListener('click', () => {
                 newNameInput.value = userNameElement.textContent;
                 userAccountInput.value = userAccountElement.textContent;
                 nameModal.style.display = 'flex';
             });
 
+            // Abrir modal de editar saldo
             editBalanceBtn.addEventListener('click', () => {
                 newBalanceInput.value = balanceElement.textContent;
                 balanceModal.style.display = 'flex';
             });
 
+            // Abrir modal de alterar foto
             profilePicElement.addEventListener('click', () => {
                 photoUrlInput.value = profilePicElement.src;
                 photoModal.style.display = 'flex';
             });
 
-            // Fechar modais
+            // Fechar todos os modais
             function closeAllModals() {
                 nameModal.style.display = 'none';
                 balanceModal.style.display = 'none';
@@ -1664,6 +1696,7 @@
                 photoUploadInput.value = '';
             }
 
+            // Eventos para fechar modais
             closeNameModal.addEventListener('click', closeAllModals);
             closeBalanceModal.addEventListener('click', closeAllModals);
             closePhotoModal.addEventListener('click', closeAllModals);
@@ -1672,7 +1705,7 @@
             cancelBalanceBtn.addEventListener('click', closeAllModals);
             cancelPhotoBtn.addEventListener('click', closeAllModals);
 
-            // Salvar alterações
+            // Salvar nome
             saveNameBtn.addEventListener('click', () => {
                 const newName = newNameInput.value.trim();
                 const newAccount = userAccountInput.value;
@@ -1680,23 +1713,27 @@
                 if (newName) {
                     userNameElement.textContent = newName;
                     userAccountElement.textContent = newAccount;
-                    saveUserData();
+                    updateUserData(); // Salvar alterações
                     closeAllModals();
+                    alert('Nome atualizado com sucesso!');
                 }
             });
 
+            // Salvar saldo
             saveBalanceBtn.addEventListener('click', () => {
                 const newBalance = newBalanceInput.value.trim();
                 if (newBalance) {
                     const formattedBalance = newBalance.replace(/[^\d,]/g, '');
                     if (formattedBalance) {
                         balanceElement.textContent = formattedBalance;
-                        saveUserData();
+                        updateUserData(); // Salvar alterações
                         closeAllModals();
+                        alert('Saldo atualizado com sucesso!');
                     }
                 }
             });
 
+            // Salvar foto
             savePhotoBtn.addEventListener('click', () => {
                 const newPhotoUrl = photoUrlInput.value.trim();
                 const file = photoUploadInput.files[0];
@@ -1705,16 +1742,18 @@
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         profilePicElement.src = e.target.result;
-                        saveUserData();
+                        updateUserData(); // Salvar alterações
                         closeAllModals();
+                        alert('Foto atualizada com sucesso!');
                     };
                     reader.readAsDataURL(file);
                 } else if (newPhotoUrl) {
                     const img = new Image();
                     img.onload = function() {
                         profilePicElement.src = newPhotoUrl;
-                        saveUserData();
+                        updateUserData(); // Salvar alterações
                         closeAllModals();
+                        alert('Foto atualizada com sucesso!');
                     };
                     img.onerror = function() {
                         alert('A URL fornecida não é uma imagem válida. Por favor, verifique e tente novamente.');
@@ -1757,27 +1796,21 @@
             });
         }
         
-        // Pular splash screen se o usuário clicar nela
-        splashScreen.addEventListener('click', () => {
-            splashScreen.classList.add('hidden');
-            setTimeout(() => {
-                loginScreen.classList.remove('hidden');
-            }, 500);
-        });
-        
-        // Botão de logout (opcional - você pode adicionar um botão de logout)
-        // Para fazer logout manualmente, abra o console do navegador e digite:
-        // localStorage.removeItem('picpay_logged_in_user');
-        // localStorage.removeItem('picpay_user_data');
-        // location.reload();
-        
+        // ==============================================
+        // INFORMAÇÕES DE DEBUG
+        // ==============================================
         console.log('Credenciais válidas para teste:');
         console.log('1. CPF: 490.589.118-37 / Senha: 1814Enzo');
         console.log('2. CPF: 111.222.333-44 / Senha: adm');
-        console.log('\nPara fazer logout manualmente, abra o console e digite:');
-        console.log('localStorage.removeItem("picpay_logged_in_user");');
-        console.log('localStorage.removeItem("picpay_user_data");');
-        console.log('location.reload();');
+        console.log('\nPara fazer logout, digite no console:');
+        console.log('logoutPicPay();');
+        
+        // Função de logout global
+        window.logoutPicPay = function() {
+            localStorage.removeItem('picpay_logged_in_user');
+            alert('Logout realizado! A página será recarregada.');
+            location.reload();
+        };
     </script>
 </body>
 </html>
