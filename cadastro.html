@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PicPay - Criar Conta</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Cores do PicPay */
+        :root {
+            --picpay-green: #1abc9c;
+            --picpay-dark-green: #16a085;
+            --picpay-darker-green: #0d8b71;
+            --picpay-black: #1a1a1a;
+            --picpay-gray: #3a3a3a;
+            --picpay-light-gray: #f5f5f5;
+            --picpay-white: #ffffff;
+            --picpay-yellow: #ffc107;
+            --picpay-red: #dc3545;
+            --picpay-blue: #007bff;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--picpay-light-gray);
+            color: var(--picpay-black);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Container Principal */
+        .signup-container {
+            width: 100%;
+            max-width: 500px;
+            background-color: var(--picpay-white);
+            border-radius: 25px;
+            padding: 40px 35px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease;
+        }
+
+        /* Header */
+        .signup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background-color: var(--picpay-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(26, 188, 156, 0.3);
+        }
+
+        .logo-text {
+            color: var(--picpay-green);
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .signup-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--picpay-black);
+            margin-bottom: 10px;
+        }
+
+        .signup-subtitle {
+            color: var(--picpay-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Progress Steps */
+        .signup-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .signup-progress::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            right: 20px;
+            height: 3px;
+            background-color: #e0e0e0;
+            z-index: 1;
+        }
+
+        .signup-progress-bar {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            height: 3px;
+            background-color: var(--picpay-green);
+            z-index: 2;
+            transition: var(--transition);
+            width: 0%;
+        }
+
+        .signup-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .signup-step-circle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            color: var(--picpay-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            transition: var(--transition);
+            border: 3px solid white;
+        }
+
+        .signup-step.active .signup-step-circle {
+            background-color: var(--picpay-green);
+            color: white;
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(26, 188, 156, 0.3);
+        }
+
+        .signup-step.completed .signup-step-circle {
+            background-color: var(--picpay-green);
+            color: white;
+        }
+
+        .signup-step.completed .signup-step-circle::after {
+            content: '✓';
+        }
+
+        .signup-step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--picpay-gray);
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .signup-step.active .signup-step-label {
+            color: var(--picpay-green);
+        }
+
+        /* Form Styles */
+        .signup-form {
+            margin-bottom: 25px;
+        }
+
+        .signup-form-step {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .signup-form-step.active {
+            display: block;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--picpay-black);
+            font-size: 0.95rem;
+        }
+
+        .form-label .required {
+            color: var(--picpay-red);
+            margin-left: 3px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 20px 16px 50px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: #fafafa;
+            color: var(--picpay-black);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--picpay-green);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(26, 188, 156, 0.1);
+        }
+
+        .form-input.error {
+            border-color: var(--picpay-red);
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+
+        .form-input.success {
+            border-color: var(--picpay-green);
+            background-color: rgba(26, 188, 156, 0.05);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--picpay-gray);
+            font-size: 1.1rem;
+        }
+
+        .input-icon.success {
+            color: var(--picpay-green);
+        }
+
+        .input-icon.error {
+            color: var(--picpay-red);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--picpay-gray);
+            cursor: pointer;
+            font-size: 1.1rem;
+            z-index: 2;
+        }
+
+        /* Error/Success Messages */
+        .form-message {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .error-message {
+            color: var(--picpay-red);
+        }
+
+        .success-message {
+            color: var(--picpay-green);
+        }
+
+        .info-message {
+            color: var(--picpay-blue);
+        }
+
+        /* Document Type Selector */
+        .doc-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .doc-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--picpay-gray);
+        }
+
+        .doc-option.active {
+            background-color: var(--picpay-green);
+            color: white;
+            border-color: var(--picpay-green);
+        }
+
+        .doc-option:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+
+        /* Terms Checkbox */
+        .terms-container {
+            background-color: #f8f9fa;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 25px 0;
+            border: 1px solid #e9ecef;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--picpay-green);
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+
+        .terms-text {
+            font-size: 0.9rem;
+            color: var(--picpay-gray);
+            line-height: 1.6;
+        }
+
+        .terms-text a {
+            color: var(--picpay-green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .terms-text a:hover {
+            text-decoration: underline;
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 10px;
+        }
+
+        .strength-bar {
+            height: 6px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 5px;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            background-color: var(--picpay-red);
+            transition: var(--transition);
+        }
+
+        .strength-text {
+            font-size: 0.8rem;
+            color: var(--picpay-gray);
+        }
+
+        .strength-fill.weak {
+            width: 33%;
+            background-color: var(--picpay-red);
+        }
+
+        .strength-fill.medium {
+            width: 66%;
+            background-color: var(--picpay-yellow);
+        }
+
+        .strength-fill.strong {
+            width: 100%;
+            background-color: var(--picpay-green);
+        }
+
+        /* Buttons */
+        .signup-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background-color: var(--picpay-green);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--picpay-dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 188, 156, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: var(--picpay-black);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Login Link */
+        .login-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: var(--picpay-gray);
+            font-size: 0.95rem;
+        }
+
+        .login-link a {
+            color: var(--picpay-green);
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .form-row .form-group {
+                margin-bottom: 25px;
+            }
+            
+            .doc-selector {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .signup-container {
+                padding: 30px 20px;
+            }
+            
+            .signup-step-label {
+                font-size: 0.75rem;
+                max-width: 70px;
+            }
+            
+            .signup-buttons {
+                flex-direction: column;
+            }
+            
+            .signup-step-circle {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Container Principal -->
+    <div class="signup-container">
+        <!-- Header -->
+        <div class="signup-header">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="logo-text">PicPay</div>
+            </div>
+            <h1 class="signup-title">Criar sua conta</h1>
+            <p class="signup-subtitle">Preencha os dados abaixo para criar sua conta no PicPay</p>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="signup-progress">
+            <div class="signup-progress-bar" id="signup-progress-bar"></div>
+            
+            <div class="signup-step active" id="signup-step-1">
+                <div class="signup-step-circle">1</div>
+                <div class="signup-step-label">Dados Pessoais</div>
+            </div>
+            
+            <div class="signup-step" id="signup-step-2">
+                <div class="signup-step-circle">2</div>
+                <div class="signup-step-label">Documentos</div>
+            </div>
+            
+            <div class="signup-step" id="signup-step-3">
+                <div class="signup-step-circle">3</div>
+                <div class="signup-step-label">Segurança</div>
+            </div>
+        </div>
+
+        <!-- Forms -->
+        <form class="signup-form" id="signup-form">
+            <!-- Step 1: Personal Data -->
+            <div class="signup-form-step active" id="signup-step1-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="first-name" class="form-label">
+                            Nome
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="first-name" class="form-input" placeholder="Seu nome" required>
+                        </div>
+                        <div class="form-message error-message" id="first-name-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Nome é obrigatório</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="last-name" class="form-label">
+                            Sobrenome
+                            <span class="required">*</span>
+                        </label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="last-name" class="form-input" placeholder="Seu sobrenome" required>
+                        </div>
+                        <div class="form-message error-message" id="last-name-error" style="display: none;">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span>Sobrenome é obrigatório</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        E-mail
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" id="email" class="form-input" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-message error-message" id="email-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Digite um e-mail válido</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone" class="form-label">
+                        Telefone
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone input-icon"></i>
+                        <input type="tel" id="phone" class="form-input" placeholder="(11) 98765-4321" required>
+                    </div>
+                    <div class="form-message error-message" id="phone-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Digite um telefone válido</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="birth-date" class="form-label">
+                        Data de Nascimento
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar input-icon"></i>
+                        <input type="date" id="birth-date" class="form-input" required>
+                    </div>
+                    <div class="form-message error-message" id="birth-date-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Você deve ter pelo menos 18 anos</span>
+                    </div>
+                </div>
+                
+                <div class="signup-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancel-signup">
+                        <i class="fas fa-times"></i>
+                        Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="next-step1">
+                        Continuar
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2: Documents -->
+            <div class="signup-form-step" id="signup-step2-form">
+                <div class="form-group">
+                    <label class="form-label">
+                        Tipo de Documento
+                        <span class="required">*</span>
+                    </label>
+                    <div class="doc-selector">
+                        <div class="doc-option active" data-type="cpf">
+                            CPF
+                        </div>
+                        <div class="doc-option" data-type="cnpj">
+                            CNPJ
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cpf" class="form-label">
+                        CPF
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" id="cpf" class="form-input" placeholder="000.000.000-00" required>
+                    </div>
+                    <div class="form-message error-message" id="cpf-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Digite um CPF válido</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="rg" class="form-label">
+                        RG
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-id-card input-icon"></i>
+                        <input type="text" id="rg" class="form-input" placeholder="00.000.000-0">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mother-name" class="form-label">
+                        Nome da Mãe
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user-friends input-icon"></i>
+                        <input type="text" id="mother-name" class="form-input" placeholder="Nome completo da sua mãe" required>
+                    </div>
+                    <div class="form-message error-message" id="mother-name-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>Nome da mãe é obrigatório</span>
+                    </div>
+                </div>
+                
+                <div class="signup-buttons">
+                    <button type="button" class="btn btn-secondary" id="back-step2">
+                        <i class="fas fa-arrow-left"></i>
+                        Voltar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="next-step2">
+                        Continuar
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Security -->
+            <div class="signup-form-step" id="signup-step3-form">
+                <div class="form-group">
+                    <label for="signup-password" class="form-label">
+                        Senha
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="signup-password" class="form-input" placeholder="Crie uma senha forte" required>
+                        <button type="button" class="password-toggle" id="toggle-signup-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="password-strength">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="signup-strength-fill"></div>
+                        </div>
+                        <div class="strength-text" id="signup-strength-text">Digite uma senha</div>
+                    </div>
+                    
+                    <div class="form-message info-message">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Use pelo menos 8 caracteres, com letras maiúsculas, minúsculas e números</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-signup-password" class="form-label">
+                        Confirmar Senha
+                        <span class="required">*</span>
+                    </label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="confirm-signup-password" class="form-input" placeholder="Digite novamente a senha" required>
+                        <button type="button" class="password-toggle" id="toggle-confirm-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="form-message error-message" id="confirm-password-error" style="display: none;">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>As senhas não coincidem</span>
+                    </div>
+                </div>
+                
+                <div class="terms-container">
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="terms-agreement" required>
+                        <div class="terms-text">
+                            <label for="terms-agreement">
+                                Li e concordo com os 
+                                <a href="#" target="_blank">Termos de Uso</a> e 
+                                <a href="#" target="_blank">Política de Privacidade</a> do PicPay.
+                                <span class="required">*</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="terms-checkbox">
+                        <input type="checkbox" id="marketing-agreement">
+                        <div class="terms-text">
+                            <label for="marketing-agreement">
+                                Concordo em receber comunicações de marketing, promoções e novidades do PicPay por e-mail e WhatsApp.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="signup-buttons">
+                    <button type="button" class="btn btn-secondary" id="back-step3">
+                        <i class="fas fa-arrow-left"></i>
+                        Voltar
+                    </button>
+                    <button type="button" class="btn btn-primary" id="create-account" disabled>
+                        <i class="fas fa-user-plus"></i>
+                        Criar Conta
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Login Link -->
+        <div class="login-link">
+            Já tem uma conta?
+            <a href="index.html">Fazer login</a>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const signupSteps = document.querySelectorAll('.signup-step');
+        const signupProgressBar = document.getElementById('signup-progress-bar');
+        const formSignupSteps = document.querySelectorAll('.signup-form-step');
+        
+        // Form Elements Step 1
+        const firstNameInput = document.getElementById('first-name');
+        const lastNameInput = document.getElementById('last-name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const birthDateInput = document.getElementById('birth-date');
+        
+        // Form Elements Step 2
+        const docOptions = document.querySelectorAll('.doc-option');
+        const cpfInput = document.getElementById('cpf');
+        const rgInput = document.getElementById('rg');
+        const motherNameInput = document.getElementById('mother-name');
+        
+        // Form Elements Step 3
+        const signupPasswordInput = document.getElementById('signup-password');
+        const confirmSignupPasswordInput = document.getElementById('confirm-signup-password');
+        const toggleSignupPasswordBtn = document.getElementById('toggle-signup-password');
+        const toggleConfirmPasswordBtn = document.getElementById('toggle-confirm-password');
+        const signupStrengthFill = document.getElementById('signup-strength-fill');
+        const signupStrengthText = document.getElementById('signup-strength-text');
+        const termsAgreement = document.getElementById('terms-agreement');
+        const marketingAgreement = document.getElementById('marketing-agreement');
+        
+        // Buttons
+        const cancelSignupBtn = document.getElementById('cancel-signup');
+        const nextStep1Btn = document.getElementById('next-step1');
+        const backStep2Btn = document.getElementById('back-step2');
+        const nextStep2Btn = document.getElementById('next-step2');
+        const backStep3Btn = document.getElementById('back-step3');
+        const createAccountBtn = document.getElementById('create-account');
+        
+        // Estado
+        let currentSignupStep = 1;
+        let selectedDocType = 'cpf';
+
+        // Inicialização
+        function initSignup() {
+            updateSignupProgressBar();
+            setupSignupEventListeners();
+            setupInputFormatters();
+            setupDateInput();
+        }
+
+        // Configurar event listeners
+        function setupSignupEventListeners() {
+            // Navegação
+            cancelSignupBtn.addEventListener('click', goToLogin);
+            nextStep1Btn.addEventListener('click', validateStep1);
+            backStep2Btn.addEventListener('click', previousSignupStep);
+            nextStep2Btn.addEventListener('click', validateStep2);
+            backStep3Btn.addEventListener('click', previousSignupStep);
+            createAccountBtn.addEventListener('click', createAccount);
+            
+            // Alternar tipo de documento
+            docOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    docOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedDocType = this.dataset.type;
+                });
+            });
+            
+            // Alternar visibilidade das senhas
+            toggleSignupPasswordBtn.addEventListener('click', function() {
+                togglePasswordVisibility(signupPasswordInput, this);
+            });
+            
+            toggleConfirmPasswordBtn.addEventListener('click', function() {
+                togglePasswordVisibility(confirmSignupPasswordInput, this);
+            });
+            
+            // Validação em tempo real
+            signupPasswordInput.addEventListener('input', validateSignupPasswordStrength);
+            confirmSignupPasswordInput.addEventListener('input', validateSignupPasswordMatch);
+            termsAgreement.addEventListener('change', validateFinalStep);
+            
+            // Validação de CPF enquanto digita
+            cpfInput.addEventListener('input', formatCPF);
+        }
+
+        // Configurar formatadores de input
+        function setupInputFormatters() {
+            // Formatar telefone
+            phoneInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 0) {
+                    value = '(' + value.substring(0, 2) + ') ' + value.substring(2);
+                }
+                if (value.length > 10) {
+                    value = value.substring(0, 10) + '-' + value.substring(10, 15);
+                }
+                
+                e.target.value = value;
+            });
+            
+            // Formatar RG
+            rgInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 0) {
+                    value = value.substring(0, 2) + '.' + value.substring(2, 5) + '.' + value.substring(5, 8) + '-' + value.substring(8, 9);
+                }
+                
+                e.target.value = value;
+            });
+        }
+
+        // Configurar input de data
+        function setupDateInput() {
+            // Definir data máxima (hoje - 18 anos)
+            const today = new Date();
+            const minDate = new Date(today.getFullYear() - 100, today.getMonth(), today.getDate());
+            const maxDate = new Date(today.getFullYear() - 18, today.getMonth(), today.getDate());
+            
+            birthDateInput.min = minDate.toISOString().split('T')[0];
+            birthDateInput.max = maxDate.toISOString().split('T')[0];
+            
+            // Definir placeholder
+            birthDateInput.value = '';
+        }
+
+        // Formatar CPF
+        function formatCPF(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length > 3) {
+                value = value.substring(0, 3) + '.' + value.substring(3);
+            }
+            if (value.length > 7) {
+                value = value.substring(0, 7) + '.' + value.substring(7);
+            }
+            if (value.length > 11) {
+                value = value.substring(0, 11) + '-' + value.substring(11, 14);
+            }
+            
+            e.target.value = value;
+        }
+
+        // Alternar visibilidade da senha
+        function togglePasswordVisibility(input, button) {
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            const icon = button.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+
+        // Ir para o login
+        function goToLogin() {
+            window.location.href = 'index.html';
+        }
+
+        // Validar Step 1
+        function validateStep1() {
+            let isValid = true;
+            
+            // Validar nome
+            if (!firstNameInput.value.trim()) {
+                showError(firstNameInput, 'first-name-error', 'Nome é obrigatório');
+                isValid = false;
+            } else {
+                clearError(firstNameInput, 'first-name-error');
+            }
+            
+            // Validar sobrenome
+            if (!lastNameInput.value.trim()) {
+                showError(lastNameInput, 'last-name-error', 'Sobrenome é obrigatório');
+                isValid = false;
+            } else {
+                clearError(lastNameInput, 'last-name-error');
+            }
+            
+            // Validar e-mail
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailInput.value.trim() || !emailRegex.test(emailInput.value)) {
+                showError(emailInput, 'email-error', 'Digite um e-mail válido');
+                isValid = false;
+            } else {
+                clearError(emailInput, 'email-error');
+            }
+            
+            // Validar telefone
+            const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+            if (!phoneInput.value.trim() || !phoneRegex.test(phoneInput.value)) {
+                showError(phoneInput, 'phone-error', 'Digite um telefone válido (ex: (11) 98765-4321)');
+                isValid = false;
+            } else {
+                clearError(phoneInput, 'phone-error');
+            }
+            
+            // Validar data de nascimento
+            if (!birthDateInput.value) {
+                showError(birthDateInput, 'birth-date-error', 'Data de nascimento é obrigatória');
+                isValid = false;
+            } else {
+                const birthDate = new Date(birthDateInput.value);
+                const today = new Date();
+                const age = today.getFullYear() - birthDate.getFullYear();
+                
+                if (age < 18) {
+                    showError(birthDateInput, 'birth-date-error', 'Você deve ter pelo menos 18 anos');
+                    isValid = false;
+                } else {
+                    clearError(birthDateInput, 'birth-date-error');
+                }
+            }
+            
+            if (isValid) {
+                nextSignupStep();
+            }
+        }
+
+        // Validar Step 2
+        function validateStep2() {
+            let isValid = true;
+            
+            // Validar CPF
+            const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+            if (!cpfInput.value.trim() || !cpfRegex.test(cpfInput.value)) {
+                showError(cpfInput, 'cpf-error', 'Digite um CPF válido');
+                isValid = false;
+            } else {
+                clearError(cpfInput, 'cpf-error');
+            }
+            
+            // Validar nome da mãe
+            if (!motherNameInput.value.trim()) {
+                showError(motherNameInput, 'mother-name-error', 'Nome da mãe é obrigatório');
+                isValid = false;
+            } else {
+                clearError(motherNameInput, 'mother-name-error');
+            }
+            
+            if (isValid) {
+                nextSignupStep();
+            }
+        }
+
+        // Validar força da senha
+        function validateSignupPasswordStrength() {
+            const password = signupPasswordInput.value;
+            let strength = 0;
+            let text = 'Digite uma senha';
+            
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            
+            // Atualizar barra de força
+            signupStrengthFill.className = 'strength-fill';
+            
+            if (password.length === 0) {
+                text = 'Digite uma senha';
+            } else if (strength <= 2) {
+                signupStrengthFill.classList.add('weak');
+                text = 'Senha fraca';
+            } else if (strength <= 4) {
+                signupStrengthFill.classList.add('medium');
+                text = 'Senha média';
+            } else {
+                signupStrengthFill.classList.add('strong');
+                text = 'Senha forte';
+            }
+            
+            signupStrengthText.textContent = text;
+            validateSignupPasswordMatch();
+            validateFinalStep();
+        }
+
+        // Validar se senhas coincidem
+        function validateSignupPasswordMatch() {
+            const password = signupPasswordInput.value;
+            const confirmPassword = confirmSignupPasswordInput.value;
+            const errorElement = document.getElementById('confirm-password-error');
+            
+            if (confirmPassword.length === 0) {
+                errorElement.style.display = 'none';
+                confirmSignupPasswordInput.classList.remove('error');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorElement.style.display = 'flex';
+                confirmSignupPasswordInput.classList.add('error');
+            } else {
+                errorElement.style.display = 'none';
+                confirmSignupPasswordInput.classList.remove('error');
+                confirmSignupPasswordInput.classList.add('success');
+            }
+            
+            validateFinalStep();
+        }
+
+        // Validar passo final
+        function validateFinalStep() {
+            const password = signupPasswordInput.value;
+            const confirmPassword = confirmSignupPasswordInput.value;
+            
+            // Verificar força mínima da senha
+            const passwordStrength = checkSignupPasswordStrength(password);
+            if (passwordStrength < 3) {
+                createAccountBtn.disabled = true;
+                return;
+            }
+            
+            // Verificar se senhas coincidem
+            if (password !== confirmPassword) {
+                createAccountBtn.disabled = true;
+                return;
+            }
+            
+            // Verificar termos
+            if (!termsAgreement.checked) {
+                createAccountBtn.disabled = true;
+                return;
+            }
+            
+            createAccountBtn.disabled = false;
+        }
+
+        // Verificar força da senha
+        function checkSignupPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[a-z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            return strength;
+        }
+
+        // Criar conta (simulado)
+        function createAccount() {
+            // Simular criação de conta
+            createAccountBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Criando conta...';
+            createAccountBtn.disabled = true;
+            
+            // Simular processo
+            setTimeout(() => {
+                alert('Conta criada com sucesso! Redirecionando para o login...');
+                window.location.href = 'index.html';
+            }, 2000);
+        }
+
+        // Mostrar erro
+        function showError(input, errorId, message) {
+            input.classList.add('error');
+            input.classList.remove('success');
+            
+            const errorElement = document.getElementById(errorId);
+            const icon = input.previousElementSibling;
+            
+            if (icon && icon.classList.contains('input-icon')) {
+                icon.classList.add('error');
+                icon.classList.remove('success');
+            }
+            
+            errorElement.querySelector('span').textContent = message;
+            errorElement.style.display = 'flex';
+            input.classList.add('shake');
+            setTimeout(() => input.classList.remove('shake'), 500);
+        }
+
+        // Limpar erro
+        function clearError(input, errorId) {
+            input.classList.remove('error');
+            
+            const errorElement = document.getElementById(errorId);
+            const icon = input.previousElementSibling;
+            
+            if (icon && icon.classList.contains('input-icon')) {
+                icon.classList.remove('error');
+            }
+            
+            errorElement.style.display = 'none';
+        }
+
+        // Navegação entre passos
+        function nextSignupStep() {
+            if (currentSignupStep >= 3) return;
+            
+            // Atualizar estado atual
+            document.getElementById(`signup-step-${currentSignupStep}`).classList.remove('active');
+            document.getElementById(`signup-step-${currentSignupStep}`).classList.add('completed');
+            
+            currentSignupStep++;
+            
+            // Adicionar 'active' ao novo passo
+            document.getElementById(`signup-step-${currentSignupStep}`).classList.add('active');
+            
+            updateSignupProgressBar();
+            
+            // Mostrar formulário correspondente
+            formSignupSteps.forEach(step => step.classList.remove('active'));
+            document.getElementById(`signup-step${currentSignupStep}-form`).classList.add('active');
+        }
+
+        function previousSignupStep() {
+            if (currentSignupStep <= 1) return;
+            
+            // Remover 'active' do passo atual
+            document.getElementById(`signup-step-${currentSignupStep}`).classList.remove('active');
+            
+            // Remover 'completed' do passo anterior
+            document.getElementById(`signup-step-${currentSignupStep-1}`).classList.remove('completed');
+            
+            currentSignupStep--;
+            
+            // Adicionar 'active' ao passo anterior
+            document.getElementById(`signup-step-${currentSignupStep}`).classList.add('active');
+            
+            updateSignupProgressBar();
+            
+            // Mostrar formulário correspondente
+            formSignupSteps.forEach(step => step.classList.remove('active'));
+            document.getElementById(`signup-step${currentSignupStep}-form`).classList.add('active');
+        }
+
+        // Atualizar barra de progresso
+        function updateSignupProgressBar() {
+            const widthPercentage = ((currentSignupStep - 1) / 2) * 100;
+            signupProgressBar.style.width = `${widthPercentage}%`;
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', initSignup);
+    </script>
+</body>
+</html>
